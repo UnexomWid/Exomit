@@ -6,7 +6,7 @@ EXCS Interpreter is a cross-platform interpreter for Exom CrypticScript written 
 # License
 The _Exom CrypticScript_ language was created by [UnexomWid](http://unexomwid.me).
 
-The _Exom CrypticScript_ _EXCS Interpreter_, and all pieces of software that interact with _EXCS_, are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+The _Exom CrypticScript_, _EXCS Interpreter_, and all pieces of software that interact with _EXCS_, are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
 # Exom CrypticScript
 _EXCS_ consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
@@ -23,7 +23,7 @@ The body of an instruction can perform actions on the index, the pointer and on 
 |:---------------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-:|:-:|
 | VALUE_INCREMENT |      +     |                                                                                                                                                                                Increments the value at the current index                                                                                                                                                                               |   |   |
 | VALUE_DECREMENT |      -     |                                                                                                                                                                                Decrements the value at the current index                                                                                                                                                                               |   |   |
-| VALUE_OPERATION | ([O][NUM]) | Executes an operation on the value at the current index [O] = operation [NUM] = number  List of operations: [$] sets the value to [NUM] [+] adds [NUM] to the value [-] subtracts [NUM] from the value [/] divides the value by [NUM] [x] sets the value to the result of XOR(value, [NUM]) [&] sets the value to the result of AND(value, [NUM]) [|] sets the value to the result of OR(value, [NUM]) |   |   |
+| VALUE_OPERATION | ([O][NUM]) | Executes an operation on the value at the current index. [O] = operation, [NUM] = number.  List of operations: [$] sets the value to [NUM], [+] adds [NUM] to the value, [-] subtracts [NUM] from the value, [/] divides the value by [NUM], [x] sets the value to the result of XOR(value, [NUM]), [&] sets the value to the result of AND(value, [NUM]), [\|] sets the value to the result of OR(value, [NUM]) |   |   |
 | INDEX_INCREMENT | >          | Increments the index                                                                                                                                                                                                                                                                                                                                                                                   |   |   |
 | INDEX_DECREMENT | <          | Decrements the index                                                                                                                                                                                                                                                                                                                                                                                   |   |   |
 | STDOUT_WRITE    | ^          | Writes the value at the current index to STDOUT, as a character                                                                                                                                                                                                                                                                                                                                        |   |   |
@@ -31,23 +31,26 @@ The body of an instruction can perform actions on the index, the pointer and on 
 | STDIN_ADD       | v          | Adds the input from STDIN to the value at the current index                                                                                                                                                                                                                                                                                                                                            |   |   |
 | STDIN_XOR       | x          | Sets the value at the current index to XOR(STDIN_input, value)                                                                                                                                                                                                                                                                                                                                         |   |   |
 | STDIN_AND       | &          | Sets the value at the current index to AND(STDIN_input, value)                                                                                                                                                                                                                                                                                                                                         |   |   |
-| STDIN_OR        | |          | Sets the value at the current index to OR(STDIN_input, value)                                                                                                                                                                                                                                                                                                                                          |   |   |
+| STDIN_OR        | \|          | Sets the value at the current index to OR(STDIN_input, value)                                                                                                                                                                                                                                                                                                                                          |   |   |
 
 ## Examples
 
 ```
 +++++^
 // Sets the value at index 0 to 5, and outputs it to STDOUT.
+// Summary: Outputs "5".
 ```
 
 ```
 V^
 // Reads from STDIN and replaces the value at index 0 with the input (STDIN_input), and outputs it to STDOUT.
+// Summary: Outputs the input.
 ```
 
 ```
 ++++++++++&^
 // Sets the value at index 0 to 10, then sets it to AND(10, STDIN_input) and outputs it to STDOUT.
+// Summary: Outputs the result of AND(10, input).
 ```
 
 ```
@@ -55,7 +58,7 @@ V^
 // Sets the value at index 0 to 72, increments the index, sets the value at index 1 to 101 . . .
 // Decrements the index 11 times, so it becomes 0.
 // Outputs all the values from index 0 to 11.
-// Outputs "Hello World!".
+// Summary: Outputs "Hello World!".
 ```
 
 ```

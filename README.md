@@ -64,4 +64,5 @@ V^
 ```
 V(+10)^
 // Sets the value at index 0 to STDIN_input, adds 10 to it, and then outputs it to STDOUT.
+// Summary: Outputs input + 10.
 ```

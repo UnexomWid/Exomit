@@ -11,11 +11,32 @@ The _Exom CrypticScript_, _EXCS Interpreter_, and all pieces of software that in
 # Exom CrypticScript
 _EXCS_ consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
 
-The pointer contains references to bytes (called _values_). Each value represents the ASCII code of a character.
+The pointer contains references to bytes (called _values_) and is implemented with `std::vector`. Each value represents the ASCII code of a character.
 
 Each instruction has an _identifier_ (represented by a character) and a _body_ (represented by a function).
 
 The body of an instruction can perform actions on the index, the pointer and on the input stream.
+
+## Using the interpreter
+
+The _EXCS Interpreter_ accepts command-line arguments.
+
+The first argument *must* be the script file to execute.
+
+Other arguments are in the form of numbers, and are optional. These are used to initialize the vector of values.
+
+### Examples
+
+```
+EXCS_Interpreter test.excs
+// Executes the "test.excs" script.
+```
+
+```
+EXCS_Interpreter test.excs 50 1 125 9 74
+// Sets the value at index 0 to 50, the value at index 1 to 1 and so on. . .
+// Executes the "test.excs" script.
+```
 
 ## List of instructions
 
@@ -55,7 +76,7 @@ V^
 
 ```
 ($72)>($101)>($108)>($108)>($111)>($32)>($87)>($111)>($114)>($108)>($100)>($33)<<<<<<<<<<<^>^>^>^>^>^>^>^>^>^>^>^
-// Sets the value at index 0 to 72, increments the index, sets the value at index 1 to 101 . . .
+// Sets the value at index 0 to 72, increments the index, sets the value at index 1 to 101 and so on. . .
 // Decrements the index 11 times, so it becomes 0.
 // Outputs all the values from index 0 to 11.
 // Summary: Outputs "Hello World!".

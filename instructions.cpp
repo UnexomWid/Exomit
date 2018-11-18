@@ -1,27 +1,6 @@
-﻿/*
- * EXCS Interpreter - A cross-platform interpreter for Exom CrypticScript written in C++.
- * Copyright (C) 2018 UnexomWid
- 
- * instructions.cpp - Contains the definitions of all instructions, the instruction list and functions used to interact with it.
-
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
- 
- 
- 
 #include "instructions.h"
 #include <algorithm>
+#include <string>
 
 std::vector<instruction> instruction_list;
 
@@ -72,6 +51,133 @@ bool find_instruction(char id, instruction &instr)
 	return true;
 }
 
+char parseNum(POINTER_INFO)
+{
+	if (script.peek() == ']')
+		return 0;
+	bool neg = false; // Negative number.
+	bool val = false; // Value at index.
+	bool ind = false; // At index.
+	bool add = false; // Add to index.
+	bool sub = false; // Subtract from index.
+
+	char op = script.get();
+
+	if (op == '-')
+	{
+		neg = true;
+		op = script.get();
+	}
+
+	if (op == '$')
+	{
+		val = true;
+		op = script.get();
+	}
+
+	if (op == 'i')
+	{
+		ind = true;
+		op = script.get();
+	}
+
+	if (op == '+')
+	{
+		add = true;
+		op = script.get();
+	}
+	else if (op == '-')
+	{
+		sub = true;
+		op = script.get();
+	}
+
+	if (!isdigit(op))
+	{
+		if (op == ']')
+		{
+			if (!ind || add || sub)
+				throw std::runtime_error("Expected number");
+			if (val)
+			{
+				return neg ? (-1) * pointer.at(index) : pointer.at(index);
+			}
+			else
+			{
+				return neg ? (-1) * index : index;
+			}
+		}
+		else if (op == '[')
+		{
+			if (ind)
+			{
+				if (val)
+				{
+					if (add)
+						return neg ? (-1) * pointer.at(index + parseNum(pointer, index, script)) : pointer.at(index + parseNum(pointer, index, script));
+					if (sub)
+						return neg ? (-1) * pointer.at(index - parseNum(pointer, index, script)) : pointer.at(index - parseNum(pointer, index, script));
+					return neg ? (-1) * pointer.at(parseNum(pointer, index, script)) : pointer.at(parseNum(pointer, index, script));
+				}
+				else
+				{
+					if (add)
+						return neg ? (-1) * (index + parseNum(pointer, index, script)) : index + parseNum(pointer, index, script);
+					if (sub)
+						return neg ? (-1) * (index - parseNum(pointer, index, script)) : index - parseNum(pointer, index, script);
+					return neg ? (-1) * parseNum(pointer, index, script) : parseNum(pointer, index, script);
+				}
+			}
+			else
+			{
+				return neg ? (-1) * parseNum(pointer, index, script) : parseNum(pointer, index, script);
+			}
+		}
+	}
+	else
+	{
+
+		std::string res;
+		res.push_back(op);
+
+		while (isdigit(op = script.get()))
+		{
+			res.push_back(op);
+		}
+
+		if(op != ']')
+			throw std::runtime_error("Expected ending square bracket");
+		while (script.peek() == ']')
+			script.ignore(1);
+
+		int num = stoi(res);
+
+		if (ind)
+		{
+			if (val)
+			{
+				if (add)
+					return neg ? (-1) * pointer.at(index + num) : pointer.at(index + num);
+				if (sub)
+					return neg ? (-1) * pointer.at(index - num) : pointer.at(index - num);
+				return neg ? (-1) * pointer.at(num) : pointer.at(num);
+			}
+			else
+			{
+				if (add)
+					return neg ? (-1) * (index + parseNum(pointer, index, script)) : index + num;
+				if (sub)
+					return neg ? (-1) * (index - num) : index - num;
+				return neg ? (-1) * num : num;
+			}
+		}
+		else
+		{
+			return neg ? (-1) * num : num;
+		}
+	}
+}
+
 void VALUE_INCREMENT(POINTER_INFO)
 {
 	pointer.at(index)++;
@@ -86,71 +192,49 @@ void VALUE_OPERATION(POINTER_INFO)
 {
 	char op = 0;
 	script.get(op);
+	if(script.get() != '[') // Square bracket.
+		throw std::runtime_error("Expected square bracket");
 
 	switch (op)
 	{
 		case '$':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) = atoi(num);
+			pointer.at(index) = parseNum(pointer, index, script);
 			break;
 		}
 		case '+':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) += atoi(num);
+			pointer.at(index) += parseNum(pointer, index, script);
 			break;
 		}
 		case '-':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) -= atoi(num);
+			pointer.at(index) -= parseNum(pointer, index, script);
 			break;
 		}
 		case '*':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) *= atoi(num);
+			pointer.at(index) *= parseNum(pointer, index, script);
 			break;
 		}
 		case '/':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) /= atoi(num);
+			pointer.at(index) /= parseNum(pointer, index, script);
 			break;
 		}
 		case 'x':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) ^= atoi(num);
+			pointer.at(index) ^= parseNum(pointer, index, script);
 			break;
 		}
 		case '&':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) &= atoi(num);
+			pointer.at(index) &= parseNum(pointer, index, script);
 			break;
 		}
 		case '|':
 		{
-			char num[255];
-			script.getline(num, 255, ')');
-
-			pointer.at(index) |= atoi(num);
+			pointer.at(index) |= parseNum(pointer, index, script);
 			break;
 		}
 		default:
@@ -159,6 +243,8 @@ void VALUE_OPERATION(POINTER_INFO)
 			break;
 		}
 	}
+
+	script.ignore(1); // Ending round bracket.
 }
 
 void INDEX_INCREMENT(POINTER_INFO)
@@ -175,7 +261,37 @@ void INDEX_DECREMENT(POINTER_INFO)
 
 void STDOUT_WRITE(POINTER_INFO)
 {
-	printf("%c", pointer.at(index));
+	char format = script.peek();
+
+	if (format != 'n' && format != 'c' && format != '_' && format != '\\')
+	{
+		printf("%c", pointer.at(index));
+		return;
+	}
+
+	while ((format == 'n' || format == 'c' || format == '_' || format == '\\') && !script.eof())
+	{
+		script.ignore(1);
+
+		if (format == 'n')
+		{
+			printf("%d", pointer.at(index));
+		}
+		else if (format == 'c')
+		{
+			printf("%c", pointer.at(index));
+		}
+		else if (format == '_')
+		{
+			printf(" ");
+		}
+		else if (format == '\\')
+		{
+			printf("\n");
+		}
+
+		format = script.peek();
+	}
 }
 
 void STDIN_READ(POINTER_INFO)

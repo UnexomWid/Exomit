@@ -157,8 +157,8 @@ Represents a number, in square brackets. A `[NUM]` may include another `[NUM]` (
 
 ```
 V^
-// Summary: Outputs the input.
-// Reads from STDIN and replaces the value at index 0 with the input (STDIN_input), and outputs it to STDOUT.
+// Summary: Outputs the input as a character.
+// Reads from STDIN and replaces the value at index 0 with the input (STDIN_input), and outputs it to STDOUT as a character.
 ```
 
 ```

@@ -29,7 +29,7 @@
 
 #pragma once
 
-#define CHRONOMETER std::chrono::steady_clock::time_point
+#define CHRONOMETER std::chrono::high_resolution_clock::time_point
 #define ULL unsigned long long
 
 // Gets the current time.

@@ -28,7 +28,7 @@
 #include <vector>
 
 void error(const char *text);
-bool fileExists(const char* file);
+bool fileExists(const char* file, std::ifstream &script);
 void interpret(std::ifstream &script, int argc, char *argv[]);
 
 CHRONOMETER chronometer;
@@ -40,11 +40,10 @@ int main(int argc, char *argv[])
 
 	const char *scriptFile = *(argv + 1);
 
-	if (!fileExists(scriptFile))
-		error("[ERROR]: Invalid script file");
-
 	std::ifstream script;
-	script.open(scriptFile);
+
+	if (!fileExists(scriptFile, script))
+		error("[ERROR]: Invalid script file");
 
 	// Executable name and script file not needed.
 	argc -= 2;
@@ -89,7 +88,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 				printf("%c", current_char); throw std::runtime_error("Invalid instruction");
 			}
 		}
-		std::cout << "\n[INFO] Execution took " << getf_exec_time_ns(chronometer);
+		std::cout << "\n[INFO] Execution took " << getf_exec_time_ns(chronometer) << "\n";
 	}
 	catch (std::exception &e)
 	{
@@ -107,8 +106,15 @@ void error(const char *text)
 	exit(EXIT_FAILURE);
 }
 
-bool fileExists(const char* file)
+bool fileExists(const char* file, std::ifstream &script)
 {
-	struct stat buffer;
-	return (stat(file, &buffer) == 0);
+	try
+	{
+		script.open(file);
+		return !script.fail();
+	}
+	catch(std::exception &e)
+	{
+		return false;
+	}
 }

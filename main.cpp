@@ -1,5 +1,5 @@
 /*
- * EXCS Interpreter - A cross-platform interpreter for Exom CrypticScript written in C++.
+ * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
  * Copyright (C) 2018  UnexomWid
 
  * main.cpp - Contains the entry point of the application.
@@ -19,7 +19,7 @@
  */
 
 #include "instructions.h"
-#include "timer.h"
+#include "timerh/timer.h"
 
 #include <iostream>
 #include <cstdio>
@@ -36,12 +36,12 @@ CHRONOMETER chronometer;
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-		error("[Error]: Invalid arguments");
+		error("[ERROR]: Invalid arguments");
 
 	const char *scriptFile = *(argv + 1);
 
 	if (!fileExists(scriptFile))
-		error("[Error]: Invalid script file");
+		error("[ERROR]: Invalid script file");
 
 	std::ifstream script;
 	script.open(scriptFile);
@@ -84,15 +84,16 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 			instruction i;
 			if (find_instruction(current_char, i))
 				i.execute(pointer, index, script);
-			else {
+			else 
+			{
 				printf("%c", current_char); throw std::runtime_error("Invalid instruction");
 			}
 		}
-		std::cout << "\nExecution took " << getf_exec_time_ns(chronometer);
+		std::cout << "\n[INFO] Execution took " << getf_exec_time_ns(chronometer);
 	}
 	catch (std::exception &e)
 	{
-		std::string err = "[Error] [Instruction ";
+		std::string err = "[ERROR] [Instruction ";
 		err.append(std::to_string(script.tellg()));
 		err.append("]: ");
 		err.append(e.what());

@@ -1,15 +1,15 @@
 # About
-_Exom CrypticScript_ (or _EXCS_ for short) is a scripting language whose main goal is to be hard to understand.
+_Exomit_ is a scripting language whose main goal is to be hard to understand.
 
-EXCS Interpreter is a cross-platform interpreter for Exom CrypticScript written in C++.
+This is a cross-platform interpreter for Exomit written in C++.
 
 # License
-The _Exom CrypticScript_ language was created by [UnexomWid](http://unexomwid.me).
+The Exomit language was created by [UnexomWid](http://unexomwid.me).
 
-The _Exom CrypticScript_, _EXCS Interpreter_, and all pieces of software that interact with _EXCS_, are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+The Exomit, Exomit Interpreter, and all pieces of software that interact with Exomit, are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
-# Exom CrypticScript
-_EXCS_ consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
+# Exomit
+Exomit consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
 
 The pointer contains references to bytes (called _values_) and is implemented with `std::vector`. Each value represents the ASCII code of a character.
 
@@ -19,7 +19,7 @@ The body of an instruction can perform actions on the index, the pointer and on 
 
 ## Using the interpreter
 
-The _EXCS Interpreter_ accepts command-line arguments.
+The Exomit Interpreter accepts command-line arguments.
 
 The first argument *must* be the script file to execute.
 
@@ -28,14 +28,14 @@ Other arguments are in the form of numbers, and are optional. These are used to 
 ### Examples
 
 ```
-EXCS_Interpreter test.excs
-// Executes the "test.excs" script.
+exomit test.exmi
+// Executes the "test.exmi" script.
 ```
 
 ```
-EXCS_Interpreter test.excs 50 1 125 9 74
+exomit test.exmi 50 1 125 9 74
 // Sets the value at index 0 to 50, the value at index 1 to 1 and so on. . .
-// Executes the "test.excs" script.
+// Executes the "test.exmi" script.
 ```
 
 ## List of instructions

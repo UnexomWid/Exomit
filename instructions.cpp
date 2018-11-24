@@ -1,5 +1,5 @@
 /*
- * EXCS Interpreter - A cross-platform interpreter for Exom CrypticScript written in C++.
+ * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
  * Copyright (C) 2018  UnexomWid
 
  * instructions.cpp - Contains the definitions of the instruction list and all instructions.

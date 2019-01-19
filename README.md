@@ -12,7 +12,7 @@ The Exomit, Exomit Interpreter, and all pieces of software that interact with Ex
 
 >Note: versions with the prefix **R** are considered stable releases, while those with the prefix **D** are considered unstable.
 
-[v1.0R](https://github.com/UnexomWid/exomit/releases/tag/v1.1R) - January 19, 2019
+[v1.0R](https://github.com/UnexomWid/exomit/releases/tag/v1.0R) - January 19, 2019
 
 # Exomit
 Exomit consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.

@@ -1,6 +1,6 @@
 /*
  * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
- * Copyright (C) 2018  UnexomWid
+ * Copyright (C) 2018-2019  UnexomWid
 
  * instructions.cpp - Contains the definitions of the instruction list and all instructions.
 
@@ -65,7 +65,7 @@ bool find_instruction(char id, instruction &instr)
 	std::vector<instruction>::iterator res;
 	res = std::lower_bound(instruction_list.begin(), instruction_list.end(), id);
 
-	if (*res > id)
+	if (res >= instruction_list.end())
 		return false;
 
 	instr = *(res);

@@ -1,6 +1,6 @@
 /*
- * TimerH - A C++ for timing.
- * Copyright (C) 2018  UnexomWid
+ * TimerH - A C++ library for timing.
+ * Copyright (C) 2018-2019  UnexomWid
 
  * timer.h - Contains the declaration of the library.
 

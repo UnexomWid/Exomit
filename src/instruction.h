@@ -1,6 +1,6 @@
 /*
  * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
- * Copyright (C) 2018  UnexomWid
+ * Copyright (C) 2018-2019  UnexomWid
 
  * instruction.h - Contains the declaration of the instruction class.
 

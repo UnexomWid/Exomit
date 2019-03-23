@@ -1,6 +1,6 @@
 /*
  * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
- * Copyright (C) 2018  UnexomWid
+ * Copyright (C) 2018-2019  UnexomWid
 
  * main.cpp - Contains the entry point of the application.
 
@@ -21,13 +21,14 @@
 #include "instructions.h"
 #include "timerh/timer.h"
 
-#include <iostream>
+#include <stdarg.h>
 #include <cstdio>
 #include <fstream>
 #include <string>
 #include <vector>
 
 void error(const char *text);
+std::string format_string(int count, const char *format, ...);
 bool fileExists(const char* file, std::ifstream &script);
 void interpret(std::ifstream &script, int argc, char *argv[]);
 
@@ -71,6 +72,8 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 			pointer.push_back(0);
 		else
 		{
+			pointer.push_back(argc);
+
 			for(int u = 0; u < argc; u++)
 				pointer.push_back(atoi(argv[u]));
 		}
@@ -83,16 +86,13 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 			instruction i;
 			if (find_instruction(current_char, i))
 				i.execute(pointer, index, script);
-			else 
-			{
-				printf("%c", current_char); throw std::runtime_error("Invalid instruction");
-			}
+			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
 		}
-		std::cout << "\n[INFO] Execution took " << getf_exec_time_ns(chronometer) << "\n";
+		printf("\n%s %s\n", "[INFO] Execution took ", getf_exec_time_ns(chronometer));
 	}
 	catch (std::exception &e)
 	{
-		std::string err = "[ERROR] [Instruction ";
+		std::string err = "\n[ERROR] [Instruction ";
 		err.append(std::to_string(script.tellg()));
 		err.append("]: ");
 		err.append(e.what());
@@ -104,6 +104,17 @@ void error(const char *text)
 {
 	std::fprintf(stderr, text);
 	exit(EXIT_FAILURE);
+}
+
+std::string format_string(int count, const char *format, ...)
+{
+	va_list argp;
+	va_start(argp, format);
+
+	char *buffer = (char*)malloc(count);
+	vsprintf(buffer, format, argp);
+
+	return std::string(buffer);
 }
 
 bool fileExists(const char* file, std::ifstream &script)

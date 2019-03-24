@@ -34,14 +34,14 @@ Other arguments are in the form of numbers, and are optional. These are used to 
 ### Examples
 
 ```
-exomit test.exmi
-// Executes the "test.exmi" script.
+exomit test.exit
+// Executes the "test.exit" script.
 ```
 
 ```
-exomit test.exmi 50 1 125 9 74
+exomit test.exit -n 50 1 125 9 74
 // Sets the value at index 0 to 50, the value at index 1 to 1 and so on. . .
-// Executes the "test.exmi" script.
+// Executes the "test.exit" script.
 ```
 
 ## List of instructions

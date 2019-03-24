@@ -68,15 +68,60 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 		std::vector<char> pointer;
 		char current_char;
 
-		if(argc <= 0)
-			pointer.push_back(0);
-		else
+		try
 		{
-			pointer.push_back(argc);
 
-			for(int u = 0; u < argc; u++)
-				pointer.push_back(atoi(argv[u]));
+			if (argc < 1)
+				pointer.push_back(0);
+			else
+			{
+				// As numbers.
+				if (strcmp(argv[0], "-n") == 0 || strcmp(argv[0], "-N") == 0)
+				{
+					argc--;
+					argv++;
+
+					pointer.push_back(argc);
+
+					for (int u = 0; u < argc; u++)
+						pointer.push_back(atoi(argv[u]));
+				}
+				// As characters.
+				else if (strcmp(argv[0], "-c") == 0 || strcmp(argv[0], "-C") == 0)
+				{
+					argc--;
+					argv++;
+
+					pointer.push_back(argc);
+
+					for (int u = 0; u < argc; u++)
+						pointer.push_back(*argv[u]);
+				}
+				// As a string.
+				else if (strcmp(argv[0], "-s") == 0 || strcmp(argv[0], "-S") == 0)
+				{
+					argc--;
+					argv++;
+
+					std::string buffer;
+					for (int u = 0; u < argc; u++)
+						buffer.append(argv[u]);
+
+					pointer.push_back(buffer.length());
+
+					for (int u = 0; u < buffer.length(); u++)
+						pointer.push_back(buffer.at(u));
+				}
+				else throw std::runtime_error(format_string(19 + strlen(argv[0]), "%s '%s'", "Invalid argument", argv[0]));
+			}
 		}
+		catch (std::exception &e)
+		{
+			std::string err = "\n[ERROR]: ";
+			err.append(e.what());
+			error(err.c_str());
+		}
+
 		while (script.get(current_char))
 		{
 			// New line, space and tab.

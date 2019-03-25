@@ -32,6 +32,9 @@ instruction INSTRUCTION_VALUE_OPERATION('(', VALUE_OPERATION);
 instruction INSTRUCTION_INDEX_INCREMENT('>', INDEX_INCREMENT);
 instruction INSTRUCTION_INDEX_DECREMENT('<', INDEX_DECREMENT);
 
+instruction INSTRUCTION_LOOP_START('{', LOOP_START);
+instruction INSTRUCTION_LOOP_END('}', LOOP_END);
+
 instruction INSTRUCTION_STDOUT_WRITE('^', STDOUT_WRITE);
 
 instruction INSTRUCTION_STDIN_READ('V', STDIN_READ);
@@ -48,6 +51,9 @@ void initialize_instructions()
 
 	instruction_list.push_back(INSTRUCTION_INDEX_INCREMENT);
 	instruction_list.push_back(INSTRUCTION_INDEX_DECREMENT);
+
+	instruction_list.push_back(INSTRUCTION_LOOP_START);
+	instruction_list.push_back(INSTRUCTION_LOOP_END);
 
 	instruction_list.push_back(INSTRUCTION_STDOUT_WRITE);
 
@@ -72,7 +78,7 @@ bool find_instruction(char id, instruction &instr)
 	return true;
 }
 
-char parseNum(POINTER_INFO)
+char parse_num(POINTER_INFO)
 {
 	if (script.peek() == ']')
 		return 0;
@@ -135,23 +141,23 @@ char parseNum(POINTER_INFO)
 				if (val)
 				{
 					if (add)
-						return neg ? (-1) * pointer.at(index + parseNum(pointer, index, script)) : pointer.at(index + parseNum(pointer, index, script));
+						return neg ? (-1) * pointer.at(index + parse_num(POINTER_INFO_PARAMS)) : pointer.at(index + parse_num(POINTER_INFO_PARAMS));
 					if (sub)
-						return neg ? (-1) * pointer.at(index - parseNum(pointer, index, script)) : pointer.at(index - parseNum(pointer, index, script));
-					return neg ? (-1) * pointer.at(parseNum(pointer, index, script)) : pointer.at(parseNum(pointer, index, script));
+						return neg ? (-1) * pointer.at(index - parse_num(POINTER_INFO_PARAMS)) : pointer.at(index - parse_num(POINTER_INFO_PARAMS));
+					return neg ? (-1) * pointer.at(parse_num(POINTER_INFO_PARAMS)) : pointer.at(parse_num(POINTER_INFO_PARAMS));
 				}
 				else
 				{
 					if (add)
-						return neg ? (-1) * (index + parseNum(pointer, index, script)) : index + parseNum(pointer, index, script);
+						return neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + parse_num(POINTER_INFO_PARAMS);
 					if (sub)
-						return neg ? (-1) * (index - parseNum(pointer, index, script)) : index - parseNum(pointer, index, script);
-					return neg ? (-1) * parseNum(pointer, index, script) : parseNum(pointer, index, script);
+						return neg ? (-1) * (index - parse_num(POINTER_INFO_PARAMS)) : index - parse_num(POINTER_INFO_PARAMS);
+					return neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS);
 				}
 			}
 			else
 			{
-				return neg ? (-1) * parseNum(pointer, index, script) : parseNum(pointer, index, script);
+				return neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS);
 			}
 		}
 	}
@@ -186,7 +192,7 @@ char parseNum(POINTER_INFO)
 			else
 			{
 				if (add)
-					return neg ? (-1) * (index + parseNum(pointer, index, script)) : index + num;
+					return neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + num;
 				if (sub)
 					return neg ? (-1) * (index - num) : index - num;
 				return neg ? (-1) * num : num;
@@ -212,56 +218,118 @@ void VALUE_DECREMENT(POINTER_INFO)
 void VALUE_OPERATION(POINTER_INFO)
 {
 	char op = 0;
-	script.get(op);
-	if(script.get() != '[') // Square bracket.
-		throw std::runtime_error("Expected square bracket");
-
-	switch (op)
+	if (script.peek() != '[') // Apply to current index.
 	{
-		case '$':
+		script.get(op);
+		if (script.get() != '[') // Square bracket.
+			throw std::runtime_error("Expected square bracket");
+
+		switch (op)
 		{
-			pointer.at(index) = parseNum(pointer, index, script);
-			break;
+			case '$':
+			{
+				pointer.at(index) = parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '+':
+			{
+				pointer.at(index) += parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '-':
+			{
+				pointer.at(index) -= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '*':
+			{
+				pointer.at(index) *= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '/':
+			{
+				pointer.at(index) /= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case 'x':
+			{
+				pointer.at(index) ^= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '&':
+			{
+				pointer.at(index) &= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '|':
+			{
+				pointer.at(index) |= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			default:
+			{
+				throw std::runtime_error("Invalid operator");
+				break;
+			}
 		}
-		case '+':
+	}
+	else
+	{
+		int new_index = parse_num(POINTER_INFO_PARAMS); // New index.
+		while (pointer.size() <= new_index) // Prevents 'invalid vector<t> subscript'.
+			pointer.push_back(0); // Pad with 0s until the new index is reached.
+
+		script.get(op);
+		if (script.get() != '[') // Square bracket.
+			throw std::runtime_error("Expected square bracket");
+
+		switch (op)
 		{
-			pointer.at(index) += parseNum(pointer, index, script);
-			break;
-		}
-		case '-':
-		{
-			pointer.at(index) -= parseNum(pointer, index, script);
-			break;
-		}
-		case '*':
-		{
-			pointer.at(index) *= parseNum(pointer, index, script);
-			break;
-		}
-		case '/':
-		{
-			pointer.at(index) /= parseNum(pointer, index, script);
-			break;
-		}
-		case 'x':
-		{
-			pointer.at(index) ^= parseNum(pointer, index, script);
-			break;
-		}
-		case '&':
-		{
-			pointer.at(index) &= parseNum(pointer, index, script);
-			break;
-		}
-		case '|':
-		{
-			pointer.at(index) |= parseNum(pointer, index, script);
-			break;
-		}
-		default:
-		{
-			throw std::runtime_error("Invalid operator");
-			break;
+			case '$':
+			{
+				pointer.at(new_index) = parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '+':
+			{
+				pointer.at(new_index) += parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '-':
+			{
+				pointer.at(new_index) -= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '*':
+			{
+				pointer.at(new_index) *= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '/':
+			{
+				pointer.at(new_index) /= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case 'x':
+			{
+				pointer.at(new_index) ^= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '&':
+			{
+				pointer.at(new_index) &= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '|':
+			{
+				pointer.at(new_index) |= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			default:
+			{
+				throw std::runtime_error("Invalid operator");
+				break;
+			}
 		}
 	}
 
@@ -278,6 +346,41 @@ void INDEX_INCREMENT(POINTER_INFO)
 void INDEX_DECREMENT(POINTER_INFO)
 {
 	index--;
+}
+
+void LOOP_START(POINTER_INFO)
+{
+	if (script.get() != '[') // Square bracket.
+		throw std::runtime_error("Expected square bracket");
+
+	loop_stack.push(script.tellg()); // Add the position to the stack.
+
+	if (parse_num(POINTER_INFO_PARAMS) == 0) // Skip loop.
+	{
+		loop_stack.pop(); // Remove the position from the stack.
+		int open_count = 1;
+		while (open_count > 0)
+		{
+			char c = script.get();
+			if (c == '{')
+				open_count++;
+			else if (c == '}')
+				open_count--;
+		}
+	}
+}
+
+void LOOP_END(POINTER_INFO)
+{
+	int after_loop = script.tellg();
+
+	script.seekg(loop_stack.top());
+
+	if (parse_num(POINTER_INFO_PARAMS) == 0) // Skip loop.
+	{
+		loop_stack.pop(); // Remove the position from the stack.
+		script.seekg(after_loop);
+	}
 }
 
 void STDOUT_WRITE(POINTER_INFO)

@@ -66,6 +66,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 
 		int index = 0;
 		std::vector<char> pointer;
+		std::stack<std::streampos> loop_stack;
 		char current_char;
 
 		try
@@ -130,7 +131,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 
 			instruction i;
 			if (find_instruction(current_char, i))
-				i.execute(pointer, index, script);
+				i.execute(POINTER_INFO_PARAMS);
 			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
 		}
 		printf("\n%s %s\n", "[INFO] Execution took ", getf_exec_time_ns(chronometer));

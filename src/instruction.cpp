@@ -53,7 +53,7 @@ void instruction::setBody(instruction_body bdy)
 
 void instruction::execute(POINTER_INFO)
 {
-	body(pointer, index, script);
+	body(POINTER_INFO_PARAMS);
 }
 
 bool instruction::operator<(char right)

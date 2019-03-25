@@ -36,6 +36,9 @@ void VALUE_OPERATION(POINTER_INFO);
 void INDEX_INCREMENT(POINTER_INFO);
 void INDEX_DECREMENT(POINTER_INFO);
 
+void LOOP_START(POINTER_INFO);
+void LOOP_END(POINTER_INFO);
+
 void STDOUT_WRITE(POINTER_INFO);
 
 void STDIN_READ(POINTER_INFO);
@@ -50,6 +53,9 @@ extern instruction INSTRUCTION_VALUE_OPERATION; // Execute an operation on value
 
 extern instruction INSTRUCTION_INDEX_INCREMENT; // Increment index.
 extern instruction INSTRUCTION_INDEX_DECREMENT; // Decrement index.
+
+extern instruction INSTRUCTION_LOOP_START; // Start a loop;
+extern instruction INSTRUCTION_LOOP_END; // End a loop;
 
 extern instruction INSTRUCTION_STDOUT_WRITE; // Write to STDOUT value from current index.
 

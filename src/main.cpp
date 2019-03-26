@@ -135,7 +135,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 				i.execute(POINTER_INFO_PARAMS);
 			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
 		}
-		printf("\n%s %s\n", "[INFO] Execution took ", getf_exec_time_ns(chronometer));
+		printf("\n%s %s\n", "[INFO] Execution took ", getf_exec_time_ns(chronometer).c_str());
 	}
 	catch (std::exception &e)
 	{

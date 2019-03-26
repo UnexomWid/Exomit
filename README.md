@@ -13,6 +13,7 @@ The Exomit, Exomit Interpreter, and all pieces of software that interact with Ex
 >Note: versions with the suffix **R** are considered stable releases, while those with the suffix **D** are considered unstable.
 
 [v1.1R](https://github.com/UnexomWid/exomit/releases/tag/v1.1R) - March 26, 2019
+
 [v1.0R](https://github.com/UnexomWid/exomit/releases/tag/v1.0R) - January 19, 2019
 
 # Exomit

@@ -56,7 +56,7 @@ exomit test.exit -n 50 1 125 9 74
 | INDEX_INCREMENT | >                | Increments the index                                                                                                                                                                                                                                                                                           |
 | INDEX_DECREMENT | <                | Decrements the index                                                                                                                                                                                                                                                                                           |
 | LOOP_START      | {[NUM]           | Marks the start of a loop, which is executed while NUM is not 0                                                                                                                                                                                                                                                |
-| LOOP_END        | }                | Marks the end of a loop.                                                                                                                                                                                                                                                                                       |
+| LOOP_END        | }                | Marks the end of a loop                                                                                                                                                                                                                                                                                        |
 | STDOUT_WRITE    | ^                | Writes the value at the current index to STDOUT, as a character. Also searches forwards for other characters (without square brackets): [c] prints the current value as a character, [n] prints the current value as a number, [_] prints a space, [\\] prints the `\n` character. See below _Script Examples_ |
 | STDIN_READ      | V                | Sets the value at the current index to the input from STDIN                                                                                                                                                                                                                                                    |
 | STDIN_ADD       | v                | Adds the input from STDIN to the value at the current index                                                                                                                                                                                                                                                    |
@@ -176,7 +176,7 @@ The loop is executed while `[NUM]` is not 0. When `[NUM]` becomes 0, the loop en
 ++++{[$i]^n_-}
 // Summary: Outputs "4 3 2 1".
 // Sets the value at index 0 to 4.
-// Takes the value at the current index (0) as the loop index.
+// Checks the value at the current index (0).
 // Shows the value at the current index (0) as a number, and then a space character.
 // Decrements the value at the current index (0).
 ```
@@ -185,7 +185,7 @@ The loop is executed while `[NUM]` is not 0. When `[NUM]` becomes 0, the loop en
 ++++{[$i]([1]$[$i]){[$i1]^n_([1]-[1])}-}
 // Summary: Outputs "4 4 4 4 3 3 3 2 2 1"
 // Sets the value at index 0 to 4.
-// Takes the value at the current index (0) as the loop index.
+// Checks the value at the current index (0).
 // Copies the value at the current index (0) to the index 1.
 // Shows the value at the current index (0) as a number, and then a space character, while the value at index 1 is not 0.
 // Subtracts 1 from the element at the index 1.

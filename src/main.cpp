@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
+#include <string.h>
 #include <vector>
 
 void error(const char *text);

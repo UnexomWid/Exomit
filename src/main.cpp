@@ -66,7 +66,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 		chronometer = time_now();
 
 		int index = 0;
-		std::vector<char> pointer;
+		std::vector<unsigned char> pointer;
 		std::stack<std::streampos> loop_stack;
 		char current_char;
 

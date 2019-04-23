@@ -1,4 +1,6 @@
-![logo](img/logo.png)
+<p align="center">
+  <img src="img/logo.png" alt="Exomit">
+</p>
 
 # About
 _Exomit_ is a scripting language whose main goal is to be cryptic and compact.

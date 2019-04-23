@@ -1,5 +1,7 @@
+![logo](img/logo.png)
+
 # About
-_Exomit_ is a scripting language whose main goal is to be hard to understand.
+_Exomit_ is a scripting language whose main goal is to be cryptic and compact.
 
 This is a cross-platform interpreter for Exomit written in C++.
 
@@ -31,7 +33,11 @@ The Exomit Interpreter accepts command-line arguments.
 
 The first argument *must* be the script file to execute.
 
-Other arguments are in the form of numbers, and are optional. These are used to initialize the vector of values.
+Other arguments are optional. These are used to initialize the vector of values.
+
+The optional arguments can be in the form of numbers `-n`, characters `-c` or a single string `-s`.
+
+The value at index 0 will always store the amount of passed arguments. The arguments will be stored at index 1 and forwards.
 
 ### Examples
 
@@ -42,7 +48,23 @@ exomit test.exit
 
 ```
 exomit test.exit -n 50 1 125 9 74
-// Sets the value at index 0 to 50, the value at index 1 to 1 and so on. . .
+// Sets the value at index 0 to 5 (because there are 5 arguments)
+// Sets the value at index 1 to 50, the value at index 2 to 1 and so on. . .
+// Executes the "test.exit" script.
+```
+
+```
+exomit test.exit -c a b h U z L
+// Sets the value at index 0 to 6 (because there are 6 arguments)
+// Sets the value at index 1 to 97 ('a' = 97), the value at index 2 to 98 ('b' = 98) and so on. . .
+// Executes the "test.exit" script.
+```
+
+```
+exomit test.exit -s H ello
+// Sets the value at index 0 to 6 (because there are 6 arguments)
+// Sets the value at index 1 to 72 ('H' = 97), the value at index 2 to 32 (' ' = 32) and so on. . .
+// (Note that spaces are considered characters too)
 // Executes the "test.exit" script.
 ```
 
@@ -77,6 +99,7 @@ Represents an operation that executes on a value. It takes [NUM] as an argument.
 |     -     |           Subtracts [NUM] from the value          |
 |     *     |           Multiplies the value by [NUM]           |
 |     /     |             Divides the value by [NUM]            |
+|     %     | Divides the value by [NUM] and gets the remainder |
 |     x     | Sets the value to the result of XOR(value, [NUM]) |
 |     &     | Sets the value to the result of AND(value, [NUM]) |
 |     \|     |  Sets the value to the result of OR(value, [NUM]  |

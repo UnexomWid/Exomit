@@ -251,6 +251,11 @@ void VALUE_OPERATION(POINTER_INFO)
 				pointer.at(index) /= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
+			case '%':
+			{
+				pointer.at(index) %= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
 			case 'x':
 			{
 				pointer.at(index) ^= parse_num(POINTER_INFO_PARAMS);
@@ -308,6 +313,11 @@ void VALUE_OPERATION(POINTER_INFO)
 			case '/':
 			{
 				pointer.at(new_index) /= parse_num(POINTER_INFO_PARAMS);
+				break;
+			}
+			case '%':
+			{
+				pointer.at(index) %= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
 			case 'x':

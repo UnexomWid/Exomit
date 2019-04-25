@@ -1,14 +1,8 @@
 /*
- * TimerH - A C++ library for timing.
+ * TimerH - A C++ library for timing code and formatting time.
  * Copyright (C) 2018-2019  UnexomWid
 
  * timer.h - Contains the declaration of the library.
-
- * Usage:
-
- * CHRONOMETER ch = TIME_NOW;
- * // Code to time goes here.
- * unsigned long long ExecutionTime = GET_EXEC_TIME_MS(ch); // Or any other GET_EXEC_TIME.
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

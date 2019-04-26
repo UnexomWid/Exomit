@@ -212,15 +212,19 @@ An expression is made up of 2 numbers and a relational operator:
 You can also chain expressions with no limit, using the logical operators (see below _Relational Operators_ and _Logical Operators_)
 
 ```
-[*number_1*]RELATIONAL_OPERATOR[*number_2*]LOGICAL_OPERATOR[*number_3*]RELATIONAL_OPERATOR[*number_4*]
+[number_1]RELATIONAL_OPERATOR[number_2]LOGICAL_OPERATOR[number_3]RELATIONAL_OPERATOR[number_4]
 ```
 
 > Note: chained expressions are evaluated recursively. Here are some examples:
+>
 > `EXP_1` AND (`EXP_2` AND (`EXP_3` AND ...))
+>
 > `EXP_1` OR (`EXP_2` OR (`EXP_3` OR ...))
+>
 > `EXP_1` OR (`EXP_2` AND (`EXP_3` OR ...))
 >
 > Currently, it's not possible to do something like this:
+>
 > (`EXP_1` AND `EXP_2`) OR (`EXP_3` AND `EXP_4`)
 
 ##### List of Relational Operators

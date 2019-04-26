@@ -79,7 +79,9 @@ exomit test.exit -s H ello
 | VALUE_OPERATION | ([INDEX]OP[NUM]) | Executes an operation on the value at an index. See below _OP_ and _[NUM]_                                                                                                                                                                                                                                     |
 | INDEX_INCREMENT | >                | Increments the index                                                                                                                                                                                                                                                                                           |
 | INDEX_DECREMENT | <                | Decrements the index                                                                                                                                                                                                                                                                                           |
-| LOOP_START      | {[NUM]           | Marks the start of a loop, which is executed while NUM is not 0                                                                                                                                                                                                                                                |
+|UNCERTAINTY_START| ?EXP             | Marks the start of an uncertainty, which is executed while the expression EXP is true                                                                                                                                                                                                                          |
+| UNCERTAINTY_END | !                | Marks the end of an uncertainty                                                                                                                                                                                                                                                                                |
+| LOOP_START      | {EXP             | Marks the start of a loop, which is executed while the expression EXP is true                                                                                                                                                                                                                                    |
 | LOOP_END        | }                | Marks the end of a loop                                                                                                                                                                                                                                                                                        |
 | STDOUT_WRITE    | ^                | Writes the value at the current index to STDOUT, as a character. Also searches forwards for other characters (without square brackets): [c] prints the current value as a character, [n] prints the current value as a number, [_] prints a space, [\\] prints the `\n` character. See below _Script Examples_ |
 | STDIN_READ      | V                | Sets the value at the current index to the input from STDIN                                                                                                                                                                                                                                                    |
@@ -182,23 +184,85 @@ Represents a number, in square brackets. A `[NUM]` may include another `[NUM]` (
 // The value at (current_index + value_at(current_index)).
 ```
 
-### Loops
+### Uncertainties and loops
 
-A loop starts with `{[NUM]` and ends with `}`.
+An uncertainty starts with `?EXP` and ends with `!`. Similarly, A loop starts with `{EXP` and ends with `}`.
 
-The loop is executed while `[NUM]` is not 0. When `[NUM]` becomes 0, the loop ends, and the execution of the script is resumed from the end of the loop (the `}` character).
+The uncertainty is executed once, if the expression `EXP` is true (see below _Expressions_).
 
->Note: `[NUM]` is checked at the start of every iteration, including the first one.
->This means the loop will never execute if `[NUM]` is 0 to begin with.
+The loop is executed while the expression `EXP` is true. When the expression becomes false, the loop ends and the execution of the script is resumed from the end of the loop (the `}` character).
+
+>Note: `EXP` is checked at the start of every iteration, including the first one.
+>This means the loop will never execute if `EXP` is false to begin with.
 
 #### Syntax
 
-{`[NUM]`instructions_go_here}
+_Uncertainties_: ?`EXP`instructions_go_here!
+_Loops_: {`EXP`instructions_go_here}
+
+#### Expression
+
+An expression is made up of 2 numbers and a relational operator:
+
+```
+[number_1]RELATIONAL_OPERATOR[number_2]
+```
+
+You can also chain expressions with no limit, using the logical operators (see below _Relational Operators_ and _Logical Operators_)
+
+```
+[*number_1*]RELATIONAL_OPERATOR[*number_2*]LOGICAL_OPERATOR[*number_3*]RELATIONAL_OPERATOR[*number_4*]
+```
+
+> Note: chained expressions are evaluated recursively. Here are some examples:
+> `EXP_1` AND (`EXP_2` AND (`EXP_3` AND ...))
+> `EXP_1` OR (`EXP_2` OR (`EXP_3` OR ...))
+> `EXP_1` OR (`EXP_2` AND (`EXP_3` OR ...))
+>
+> Currently, it's not possible to do something like this:
+> (`EXP_1` AND `EXP_2`) OR (`EXP_3` AND `EXP_4`)
+
+##### List of Relational Operators
+
+| Relational Operator              | Identifier | Description                                                                 |
+|----------------------------------|------------|-----------------------------------------------------------------------------|
+| RELATIONAL_EQUAL                 | EQ         | Checks whether the left number is equal to the right number                 |
+| RELATIONAL_NOT_EQUAL             | NEQ        | Checks whether the left number is not equal to the right number             |
+| RELATIONAL_GREATER_THAN          | GT         | Checks whether the left number is greater than the right number             |
+| RELATIONAL_GREATER_THAN_OR_EQUAL | GTE        | Checks whether the left number is greater than or equal to the right number |
+| RELATIONAL_LESS_THAN             | LT         | Checks whether the left number is less than the right number                |
+| RELATIONAL_LESS_THAN_OR_EQUAL    | LTE        | Checks whether the left number is less than or equal to the right number    |
+
+##### List of Logical Operators
+
+| Logical Operator | Identifier | Description                                   |
+|------------------|------------|-----------------------------------------------|
+| LOGICAL_AND      | AND        | Checks whether both expressions are true      |
+| LOGICAL_OR       | OR         | Checks whether at lest one expression is true |
+| LOGICAL_XOR      | XOR        | Checks whether the expressions are not equal  |
+
+##### Example expressions
+
+```
+[5]EQU[4] // 5 == 4
+```
+
+```
+[i]LT[10] // index < 10
+```
+
+```
+[i]LT[10]AND[i]GTE[4] // (index < 10) && (index >= 4)
+```
+
+```
+[i]LT[10]AND[i]GTE[4]OR[i]LT[8] // (index < 10) && ((index >= 4) || (index < 8))
+```
 
 #### Example loops
 
 ```
-++++{[$i]^n_-}
+++++{[$i]GT[0]^n_-}
 // Summary: Outputs "4 3 2 1".
 // Sets the value at index 0 to 4.
 // Checks the value at the current index (0).
@@ -207,7 +271,7 @@ The loop is executed while `[NUM]` is not 0. When `[NUM]` becomes 0, the loop en
 ```
 
 ```
-++++{[$i]([1]$[$i]){[$i1]^n_([1]-[1])}-}
+++++{[$i]GT[0]([1]$[$i]){[$i1]GT[0]^n_([1]-[1])}-}
 // Summary: Outputs "4 4 4 4 3 3 3 2 2 1"
 // Sets the value at index 0 to 4.
 // Checks the value at the current index (0).

@@ -42,5 +42,6 @@
 
 #define LOGICAL_AND "AND"
 #define LOGICAL_OR "OR"
+#define LOGICAL_XOR "XOR"
 
 typedef void(*instruction_body)(POINTER_INFO);

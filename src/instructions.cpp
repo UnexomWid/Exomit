@@ -237,33 +237,52 @@ bool parse_expression(POINTER_INFO)
 	char right = parse_num(POINTER_INFO_PARAMS);
 
 	bool expression;
-	if (!relational_operator.compare(RELATIONAL_EQUAL)) // Equal.
+	if (relational_operator.compare(RELATIONAL_EQUAL) == 0) // Equal.
 		expression = left == right;
-	else if (!relational_operator.compare(RELATIONAL_NOT_EQUAL)) // Not Equal.
+	else if (relational_operator.compare(RELATIONAL_NOT_EQUAL) == 0) // Not Equal.
 		expression = left != right;
-	else if (!relational_operator.compare(RELATIONAL_GREATER_THAN)) // Greater Than.
+	else if (relational_operator.compare(RELATIONAL_GREATER_THAN) == 0) // Greater Than.
 		expression = left > right;
-	else if (!relational_operator.compare(RELATIONAL_GREATER_THAN_OR_EQUAL)) // Greater Than or Equal.
+	else if (relational_operator.compare(RELATIONAL_GREATER_THAN_OR_EQUAL) == 0) // Greater Than or Equal.
 		expression = left >= right;
-	else if (!relational_operator.compare(RELATIONAL_LESS_THAN)) // Less Than.
+	else if (relational_operator.compare(RELATIONAL_LESS_THAN) == 0) // Less Than.
 		expression = left < right;
-	else if (!relational_operator.compare(RELATIONAL_LESS_THAN_OR_EQUAL)) // Less Than or Equal.
+	else if (relational_operator.compare(RELATIONAL_LESS_THAN_OR_EQUAL) == 0) // Less Than or Equal.
 		expression = left <= right;
 	else throw std::exception("Invalid relational operator");
 
-	std::string next_expression;
+	std::string logical_operator;
+	int before = script.tellg();
+
 	for (char c : LOGICAL_AND) // AND.
 		if (script.peek() == c)
-			next_expression.push_back(script.get());
-	if (next_expression.compare(LOGICAL_AND)) // OR.
+			logical_operator.push_back(script.get());
+	if (logical_operator.compare(LOGICAL_AND) != 0)
 	{
-		next_expression = "";
-		for (char c : LOGICAL_OR)
+		script.seekg(before);
+		logical_operator = "";
+		for (char c : LOGICAL_OR) // OR.
 			if (script.peek() == c)
-				next_expression.push_back(script.get());
+				logical_operator.push_back(script.get());
+		if (logical_operator.compare(LOGICAL_OR) != 0)
+		{
+			script.seekg(before);
+			logical_operator = "";
+			for (char c : LOGICAL_XOR) // XOR.
+				if (script.peek() == c)
+					logical_operator.push_back(script.get());
+			if (logical_operator.compare(LOGICAL_XOR) != 0)
+				script.seekg(before); // Nothing.
+		}
 	}
 
-	return (!next_expression.compare(LOGICAL_AND) ? expression && parse_expression(POINTER_INFO_PARAMS) : (!next_expression.compare(LOGICAL_OR) ? expression || parse_expression(POINTER_INFO_PARAMS) : expression));
+	if (logical_operator.compare(LOGICAL_AND) == 0)
+		return expression && parse_expression(POINTER_INFO_PARAMS);
+	if (logical_operator.compare(LOGICAL_OR) == 0)
+		return parse_expression(POINTER_INFO_PARAMS) || expression; // Force parse, even if 'expression' is true, to move the stream cursor forwards.
+	if (logical_operator.compare(LOGICAL_XOR) == 0)
+		return expression != parse_expression(POINTER_INFO_PARAMS);
+	return expression;
 }
 
 void VALUE_INCREMENT(POINTER_INFO)

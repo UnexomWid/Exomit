@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <string>
 
-std::vector<instruction> instruction_list;
+std::unordered_map<char, instruction> instruction_list;
 
 instruction INSTRUCTION_VALUE_INCREMENT('+', VALUE_INCREMENT);
 instruction INSTRUCTION_VALUE_DECREMENT('-', VALUE_DECREMENT);
@@ -48,40 +48,37 @@ instruction INSTRUCTION_STDIN_OR('|', STDIN_OR);
 
 void initialize_instructions()
 {
-	instruction_list.push_back(INSTRUCTION_VALUE_INCREMENT);
-	instruction_list.push_back(INSTRUCTION_VALUE_DECREMENT);
-	instruction_list.push_back(INSTRUCTION_VALUE_OPERATION);
+	instruction_list[INSTRUCTION_VALUE_INCREMENT.getIdentifier()] = INSTRUCTION_VALUE_INCREMENT;
+	instruction_list[INSTRUCTION_VALUE_DECREMENT.getIdentifier()] = INSTRUCTION_VALUE_DECREMENT;
+	instruction_list[INSTRUCTION_VALUE_OPERATION.getIdentifier()] = INSTRUCTION_VALUE_OPERATION;
 
-	instruction_list.push_back(INSTRUCTION_INDEX_INCREMENT);
-	instruction_list.push_back(INSTRUCTION_INDEX_DECREMENT);
+	instruction_list[INSTRUCTION_INDEX_INCREMENT.getIdentifier()] = INSTRUCTION_INDEX_INCREMENT;
+	instruction_list[INSTRUCTION_INDEX_DECREMENT.getIdentifier()] = INSTRUCTION_INDEX_DECREMENT;
 
-	instruction_list.push_back(INSTRUCTION_UNCERTAINTY_START);
-	instruction_list.push_back(INSTRUCTION_UNCERTAINTY_END);
+	instruction_list[INSTRUCTION_UNCERTAINTY_START.getIdentifier()] = INSTRUCTION_UNCERTAINTY_START;
+	instruction_list[INSTRUCTION_UNCERTAINTY_END.getIdentifier()] = INSTRUCTION_UNCERTAINTY_END;
 
-	instruction_list.push_back(INSTRUCTION_LOOP_START);
-	instruction_list.push_back(INSTRUCTION_LOOP_END);
+	instruction_list[INSTRUCTION_LOOP_START.getIdentifier()] = INSTRUCTION_LOOP_START;
+	instruction_list[INSTRUCTION_LOOP_END.getIdentifier()] = INSTRUCTION_LOOP_END;
 
-	instruction_list.push_back(INSTRUCTION_STDOUT_WRITE);
+	instruction_list[INSTRUCTION_STDOUT_WRITE.getIdentifier()] = INSTRUCTION_STDOUT_WRITE;
 
-	instruction_list.push_back(INSTRUCTION_STDIN_READ);
-	instruction_list.push_back(INSTRUCTION_STDIN_ADD);
-	instruction_list.push_back(INSTRUCTION_STDIN_XOR);
-	instruction_list.push_back(INSTRUCTION_STDIN_AND);
-	instruction_list.push_back(INSTRUCTION_STDIN_OR);
-
-	std::sort(instruction_list.begin(), instruction_list.end(), [](instruction a, instruction b) { return a < b; });
+	instruction_list[INSTRUCTION_STDIN_READ.getIdentifier()] = INSTRUCTION_STDIN_READ;
+	instruction_list[INSTRUCTION_STDIN_ADD.getIdentifier()] = INSTRUCTION_STDIN_ADD;
+	instruction_list[INSTRUCTION_STDIN_XOR.getIdentifier()] = INSTRUCTION_STDIN_XOR;
+	instruction_list[INSTRUCTION_STDIN_AND.getIdentifier()] = INSTRUCTION_STDIN_AND;
+	instruction_list[INSTRUCTION_STDIN_OR.getIdentifier()] = INSTRUCTION_STDIN_OR;
 }
 
 bool find_instruction(char id, instruction &instr)
 {
-	std::vector<instruction>::iterator res;
-	res = std::lower_bound(instruction_list.begin(), instruction_list.end(), id);
+	if (instruction_list.find(id) != instruction_list.end())
+	{
+		instr = instruction_list[id];
+		return true;
+	}
 
-	if (res >= instruction_list.end())
-		return false;
-
-	instr = *(res);
-	return true;
+	return false;
 }
 
 char parse_num(POINTER_INFO)

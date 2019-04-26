@@ -22,7 +22,9 @@
 
 #include "instruction.h"
 
-extern std::vector<instruction> instruction_list;
+#include <unordered_map>
+
+extern std::unordered_map<char, instruction> instruction_list;
 
 extern void initialize_instructions();
 bool find_instruction(char id, instruction &instr);

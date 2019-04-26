@@ -22,12 +22,12 @@
 
 #include "instruction.h"
 
-#include <vector>
-
 extern std::vector<instruction> instruction_list;
 
 extern void initialize_instructions();
 bool find_instruction(char id, instruction &instr);
+char parse_num(POINTER_INFO);
+bool parse_expression(POINTER_INFO);
 
 void VALUE_INCREMENT(POINTER_INFO);
 void VALUE_DECREMENT(POINTER_INFO);
@@ -35,6 +35,9 @@ void VALUE_OPERATION(POINTER_INFO);
 
 void INDEX_INCREMENT(POINTER_INFO);
 void INDEX_DECREMENT(POINTER_INFO);
+
+void UNCERTAINTY_START(POINTER_INFO);
+void UNCERTAINTY_END(POINTER_INFO);
 
 void LOOP_START(POINTER_INFO);
 void LOOP_END(POINTER_INFO);
@@ -53,6 +56,9 @@ extern instruction INSTRUCTION_VALUE_OPERATION; // Execute an operation on value
 
 extern instruction INSTRUCTION_INDEX_INCREMENT; // Increment index.
 extern instruction INSTRUCTION_INDEX_DECREMENT; // Decrement index.
+
+extern instruction INSTRUCTION_UNCERTAINTY_START; // Start an uncertainty;
+extern instruction INSTRUCTION_UNCERTAINTY_END; // End an uncertainty;
 
 extern instruction INSTRUCTION_LOOP_START; // Start a loop;
 extern instruction INSTRUCTION_LOOP_END; // End a loop;

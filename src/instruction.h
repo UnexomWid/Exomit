@@ -20,13 +20,7 @@
 
 #pragma once
 
-#include <vector>
-#include <fstream>
-#include <stack>
-
-#define POINTER_INFO std::vector<unsigned char> &pointer, int &index, std::ifstream &script, std::stack<std::streampos> &loop_stack
-#define POINTER_INFO_PARAMS pointer, index, script, loop_stack
-typedef void(*instruction_body)(POINTER_INFO);
+#include "definitions.h"
 
 class instruction
 {

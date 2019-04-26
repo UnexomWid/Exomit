@@ -23,10 +23,8 @@
 
 #include <stdarg.h>
 #include <cstdio>
-#include <fstream>
 #include <string>
 #include <string.h>
-#include <vector>
 
 void error(const char *text);
 std::string format_string(int count, const char *format, ...);
@@ -68,6 +66,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 		int index = 0;
 		std::vector<unsigned char> pointer;
 		std::stack<std::streampos> loop_stack;
+		int uncertainty_count = 0;
 		char current_char;
 
 		try

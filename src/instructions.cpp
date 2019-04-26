@@ -32,6 +32,9 @@ instruction INSTRUCTION_VALUE_OPERATION('(', VALUE_OPERATION);
 instruction INSTRUCTION_INDEX_INCREMENT('>', INDEX_INCREMENT);
 instruction INSTRUCTION_INDEX_DECREMENT('<', INDEX_DECREMENT);
 
+instruction INSTRUCTION_UNCERTAINTY_START('?', UNCERTAINTY_START);
+instruction INSTRUCTION_UNCERTAINTY_END('!', UNCERTAINTY_END);
+
 instruction INSTRUCTION_LOOP_START('{', LOOP_START);
 instruction INSTRUCTION_LOOP_END('}', LOOP_END);
 
@@ -51,6 +54,9 @@ void initialize_instructions()
 
 	instruction_list.push_back(INSTRUCTION_INDEX_INCREMENT);
 	instruction_list.push_back(INSTRUCTION_INDEX_DECREMENT);
+
+	instruction_list.push_back(INSTRUCTION_UNCERTAINTY_START);
+	instruction_list.push_back(INSTRUCTION_UNCERTAINTY_END);
 
 	instruction_list.push_back(INSTRUCTION_LOOP_START);
 	instruction_list.push_back(INSTRUCTION_LOOP_END);
@@ -80,49 +86,66 @@ bool find_instruction(char id, instruction &instr)
 
 char parse_num(POINTER_INFO)
 {
-	if (script.peek() == ']')
-		return 0;
+	// This function expects a NUMBER_START character at the beginning.
+	// That's why characters should be extracted carefully, with peek() instead of get().
+	// NUMBER_START characters should not be discarded/ignored somewhere else, except at the beginning of this function (see below).
+
+	if (script.get() != NUMBER_START)
+		throw std::exception("Expected number start");
+
 	bool neg = false; // Negative number.
 	bool val = false; // Value at index.
 	bool ind = false; // At index.
-	bool add = false; // Add to index.
-	bool sub = false; // Subtract from index.
+	bool add = false; // Add.
+	bool sub = false; // Subtract.
 
-	char op = script.get();
+	char op = script.peek(); // Number start or something else. Don't discard/ignore it yet (see above).
 
-	if (op == '-')
+	if (op == NUMBER_END)
 	{
+		script.ignore(1); // Not a number start.
+		return 0;
+	}
+	if (op == NUMBER_MODIFIER_NEGATIVE)
+	{
+		script.ignore(1); // Not a number start.
 		neg = true;
-		op = script.get();
+		op = script.peek();
 	}
 
-	if (op == '$')
+	if (op == NUMBER_MODIFIER_VALUE_AT)
 	{
+		script.ignore(1); // Not a number start.
 		val = true;
-		op = script.get();
+		op = script.peek();
 	}
 
-	if (op == 'i')
+	if (op == NUMBER_MODIFIER_INDEX)
 	{
+		script.ignore(1); // Not a number start.
 		ind = true;
-		op = script.get();
+		op = script.peek();
 	}
 
 	if (op == '+')
 	{
+		script.ignore(1); // Not a number start.
 		add = true;
-		op = script.get();
+		op = script.peek();
 	}
 	else if (op == '-')
 	{
+		script.ignore(1); // Not a number start.
 		sub = true;
-		op = script.get();
+		op = script.peek();
 	}
 
 	if (!isdigit(op))
 	{
-		if (op == ']')
+		if (op == NUMBER_END)
 		{
+			script.ignore(1); // Not a number start.
+
 			if (!ind || add || sub)
 				throw std::runtime_error("Expected number");
 			if (val)
@@ -134,7 +157,7 @@ char parse_num(POINTER_INFO)
 				return neg ? (-1) * index : index;
 			}
 		}
-		else if (op == '[')
+		else if (op == NUMBER_START) // Number start.
 		{
 			if (ind)
 			{
@@ -163,6 +186,7 @@ char parse_num(POINTER_INFO)
 	}
 	else
 	{
+		script.ignore(1); // Not a number start.
 
 		std::string res;
 		res.push_back(op);
@@ -172,9 +196,9 @@ char parse_num(POINTER_INFO)
 			res.push_back(op);
 		}
 
-		if(op != ']')
-			throw std::runtime_error("Expected ending square bracket");
-		while (script.peek() == ']')
+		if(op != NUMBER_END)
+			throw std::runtime_error("Expected number end");
+		while (script.peek() == NUMBER_END)
 			script.ignore(1);
 
 		int num = stoi(res);
@@ -205,6 +229,46 @@ char parse_num(POINTER_INFO)
 	}
 }
 
+bool parse_expression(POINTER_INFO)
+{
+	char left = parse_num(POINTER_INFO_PARAMS);
+
+	std::string relational_operator;
+	while (script.peek() != NUMBER_START)
+		relational_operator.push_back(script.get());
+
+	char right = parse_num(POINTER_INFO_PARAMS);
+
+	bool expression;
+	if (!relational_operator.compare(RELATIONAL_EQUAL)) // Equal.
+		expression = left == right;
+	else if (!relational_operator.compare(RELATIONAL_NOT_EQUAL)) // Not Equal.
+		expression = left != right;
+	else if (!relational_operator.compare(RELATIONAL_GREATER_THAN)) // Greater Than.
+		expression = left > right;
+	else if (!relational_operator.compare(RELATIONAL_GREATER_THAN_OR_EQUAL)) // Greater Than or Equal.
+		expression = left >= right;
+	else if (!relational_operator.compare(RELATIONAL_LESS_THAN)) // Less Than.
+		expression = left < right;
+	else if (!relational_operator.compare(RELATIONAL_LESS_THAN_OR_EQUAL)) // Less Than or Equal.
+		expression = left <= right;
+	else throw std::exception("Invalid relational operator");
+
+	std::string next_expression;
+	for (char c : LOGICAL_AND) // AND.
+		if (script.peek() == c)
+			next_expression.push_back(script.get());
+	if (next_expression.compare(LOGICAL_AND)) // OR.
+	{
+		next_expression = "";
+		for (char c : LOGICAL_OR)
+			if (script.peek() == c)
+				next_expression.push_back(script.get());
+	}
+
+	return (!next_expression.compare(LOGICAL_AND) ? expression && parse_expression(POINTER_INFO_PARAMS) : (!next_expression.compare(LOGICAL_OR) ? expression || parse_expression(POINTER_INFO_PARAMS) : expression));
+}
+
 void VALUE_INCREMENT(POINTER_INFO)
 {
 	pointer.at(index)++;
@@ -218,11 +282,9 @@ void VALUE_DECREMENT(POINTER_INFO)
 void VALUE_OPERATION(POINTER_INFO)
 {
 	char op = 0;
-	if (script.peek() != '[') // Apply to current index.
+	if (script.peek() != NUMBER_START) // Apply to current index.
 	{
 		script.get(op);
-		if (script.get() != '[') // Square bracket.
-			throw std::runtime_error("Expected square bracket");
 
 		switch (op)
 		{
@@ -285,8 +347,6 @@ void VALUE_OPERATION(POINTER_INFO)
 			pointer.push_back(0); // Pad with 0s until the new index is reached.
 
 		script.get(op);
-		if (script.get() != '[') // Square bracket.
-			throw std::runtime_error("Expected square bracket");
 
 		switch (op)
 		{
@@ -358,14 +418,36 @@ void INDEX_DECREMENT(POINTER_INFO)
 	index--;
 }
 
+void UNCERTAINTY_START(POINTER_INFO)
+{
+	if (!parse_expression(POINTER_INFO_PARAMS)) // Skip uncertainty.
+	{
+		int open_count = 1;
+		while (open_count > 0)
+		{
+			char c = script.get();
+			if (c == '?')
+				open_count++;
+			else if (c == '!')
+				open_count--;
+		}
+	}
+	else ++uncertainty_count;
+}
+
+void UNCERTAINTY_END(POINTER_INFO)
+{
+	if (uncertainty_count == 0)
+		throw std::runtime_error("Unexpected uncertainty end");
+
+	--uncertainty_count;
+}
+
 void LOOP_START(POINTER_INFO)
 {
-	if (script.get() != '[') // Square bracket.
-		throw std::runtime_error("Expected square bracket");
-
 	loop_stack.push(script.tellg()); // Add the position to the stack.
 
-	if (parse_num(POINTER_INFO_PARAMS) == 0) // Skip loop.
+	if (!parse_expression(POINTER_INFO_PARAMS)) // Skip loop.
 	{
 		loop_stack.pop(); // Remove the position from the stack.
 		int open_count = 1;
@@ -386,7 +468,7 @@ void LOOP_END(POINTER_INFO)
 
 	script.seekg(loop_stack.top());
 
-	if (parse_num(POINTER_INFO_PARAMS) == 0) // Skip loop.
+	if (!parse_expression(POINTER_INFO_PARAMS)) // Skip loop.
 	{
 		loop_stack.pop(); // Remove the position from the stack.
 		script.seekg(after_loop);

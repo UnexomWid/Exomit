@@ -225,7 +225,7 @@ You can also chain expressions with no limit, using the logical operators (see b
 >
 > Currently, it's not possible to do something like this:
 >
-> (`EXP_1` AND `EXP_2`) OR (`EXP_3` AND `EXP_4`)
+> (`EXP_1` OR `EXP_2`) AND (`EXP_3` OR `EXP_4`)
 
 ##### List of Relational Operators
 

@@ -88,7 +88,7 @@ char parse_num(POINTER_INFO)
 	// NUMBER_START characters should not be discarded/ignored somewhere else, except at the beginning of this function (see below).
 
 	if (script.get() != NUMBER_START)
-		throw std::exception("Expected number start");
+		throw std::runtime_error("Expected number start");
 
 	bool neg = false; // Negative number.
 	bool val = false; // Value at index.
@@ -249,7 +249,7 @@ bool parse_expression(POINTER_INFO)
 		expression = left < right;
 	else if (relational_operator.compare(RELATIONAL_LESS_THAN_OR_EQUAL) == 0) // Less Than or Equal.
 		expression = left <= right;
-	else throw std::exception("Invalid relational operator");
+	else throw std::runtime_error("Invalid relational operator");
 
 	std::string logical_operator;
 	int before = script.tellg();

@@ -1,5 +1,5 @@
 /*
- * TimerH - A C++ library for timing code and formatting time.
+ * TimerH - A C++ library for timing.
  * Copyright (C) 2018-2019  UnexomWid
 
  * timer.cpp - Contains the definition of the library.
@@ -104,7 +104,7 @@ std::string format_time_ms(ULL milliseconds)
 		sTime += " second";
 		if (tmp > 1)
 			sTime += 's';
-		milliseconds %= 60000;
+		milliseconds %= 1000;
 	}
 
 	tmp = milliseconds; // Milliseconds.
@@ -174,7 +174,7 @@ std::string format_time_mis(ULL microseconds)
 		sTime += " second";
 		if (tmp > 1)
 			sTime += 's';
-		microseconds %= 60000000;
+		microseconds %= 1000000;
 	}
 
 	tmp = microseconds / 1000; // Milliseconds.
@@ -256,7 +256,7 @@ std::string format_time_ns(ULL nanoseconds)
 		sTime += " second";
 		if (tmp > 1)
 			sTime += 's';
-		nanoseconds %= 60000000000;
+		nanoseconds %= 1000000000;
 	}
 
 	tmp = nanoseconds / 1000000; // Milliseconds.

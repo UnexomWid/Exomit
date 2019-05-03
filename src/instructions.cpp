@@ -81,7 +81,7 @@ bool find_instruction(char id, instruction &instr)
 	return false;
 }
 
-char parse_num(POINTER_INFO)
+unsigned char parse_num(POINTER_INFO)
 {
 	// This function expects a NUMBER_START character at the beginning.
 	// That's why characters should be extracted carefully, with peek() instead of get().
@@ -147,11 +147,11 @@ char parse_num(POINTER_INFO)
 				throw std::runtime_error("Expected number");
 			if (val)
 			{
-				return neg ? (-1) * pointer.at(index) : pointer.at(index);
+				return (unsigned char)(neg ? (-1) * pointer.at(index) : pointer.at(index));
 			}
 			else
 			{
-				return neg ? (-1) * index : index;
+				return (unsigned char)(neg ? (-1) * index : index);
 			}
 		}
 		else if (op == NUMBER_START) // Number start.
@@ -161,23 +161,23 @@ char parse_num(POINTER_INFO)
 				if (val)
 				{
 					if (add)
-						return neg ? (-1) * pointer.at(index + parse_num(POINTER_INFO_PARAMS)) : pointer.at(index + parse_num(POINTER_INFO_PARAMS));
+						return (unsigned char) (neg ? (-1) * pointer.at(index + parse_num(POINTER_INFO_PARAMS)) : pointer.at(index + parse_num(POINTER_INFO_PARAMS)));
 					if (sub)
-						return neg ? (-1) * pointer.at(index - parse_num(POINTER_INFO_PARAMS)) : pointer.at(index - parse_num(POINTER_INFO_PARAMS));
-					return neg ? (-1) * pointer.at(parse_num(POINTER_INFO_PARAMS)) : pointer.at(parse_num(POINTER_INFO_PARAMS));
+						return (unsigned char)(neg ? (-1) * pointer.at(index - parse_num(POINTER_INFO_PARAMS)) : pointer.at(index - parse_num(POINTER_INFO_PARAMS)));
+					return (unsigned char)(neg ? (-1) * pointer.at(parse_num(POINTER_INFO_PARAMS)) : pointer.at(parse_num(POINTER_INFO_PARAMS)));
 				}
 				else
 				{
 					if (add)
-						return neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + parse_num(POINTER_INFO_PARAMS);
+						return (unsigned char)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + parse_num(POINTER_INFO_PARAMS));
 					if (sub)
-						return neg ? (-1) * (index - parse_num(POINTER_INFO_PARAMS)) : index - parse_num(POINTER_INFO_PARAMS);
-					return neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS);
+						return (unsigned char)(neg ? (-1) * (index - parse_num(POINTER_INFO_PARAMS)) : index - parse_num(POINTER_INFO_PARAMS));
+					return (unsigned char)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
 				}
 			}
 			else
 			{
-				return neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS);
+				return (unsigned char)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
 			}
 		}
 	}
@@ -205,36 +205,36 @@ char parse_num(POINTER_INFO)
 			if (val)
 			{
 				if (add)
-					return neg ? (-1) * pointer.at(index + num) : pointer.at(index + num);
+					return (unsigned char)(neg ? (-1) * pointer.at(index + num) : pointer.at(index + num));
 				if (sub)
-					return neg ? (-1) * pointer.at(index - num) : pointer.at(index - num);
-				return neg ? (-1) * pointer.at(num) : pointer.at(num);
+					return (unsigned char)(neg ? (-1) * pointer.at(index - num) : pointer.at(index - num));
+				return (unsigned char)(neg ? (-1) * pointer.at(num) : pointer.at(num));
 			}
 			else
 			{
 				if (add)
-					return neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + num;
+					return (unsigned char)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + num);
 				if (sub)
-					return neg ? (-1) * (index - num) : index - num;
-				return neg ? (-1) * num : num;
+					return (unsigned char)(neg ? (-1) * (index - num) : index - num);
+				return (unsigned char)(neg ? (-1) * num : num);
 			}
 		}
 		else
 		{
-			return neg ? (-1) * num : num;
+			return (unsigned char)(neg ? (-1) * num : num);
 		}
 	}
 }
 
 bool parse_expression(POINTER_INFO)
 {
-	char left = parse_num(POINTER_INFO_PARAMS);
+	unsigned char left = parse_num(POINTER_INFO_PARAMS);
 
 	std::string relational_operator;
 	while (script.peek() != NUMBER_START)
 		relational_operator.push_back(script.get());
 
-	char right = parse_num(POINTER_INFO_PARAMS);
+	unsigned char right = parse_num(POINTER_INFO_PARAMS);
 
 	bool expression;
 	if (relational_operator.compare(RELATIONAL_EQUAL) == 0) // Equal.

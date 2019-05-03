@@ -28,7 +28,7 @@ extern std::unordered_map<char, instruction> instruction_list;
 
 extern void initialize_instructions();
 bool find_instruction(char id, instruction &instr);
-char parse_num(POINTER_INFO);
+unsigned char parse_num(POINTER_INFO);
 bool parse_expression(POINTER_INFO);
 
 void VALUE_INCREMENT(POINTER_INFO);

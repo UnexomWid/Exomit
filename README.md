@@ -2,12 +2,12 @@
   <img src="img/logo.png" alt="Exomit">
 </p>
 
-# About
+# About <a href="https://en.wikipedia.org/wiki/C%2B%2B11"><img align="right" src="https://img.shields.io/badge/C%2B%2B-11-00599C?logo=C%2B%2B" alt="C++ 11" /></a>
 _Exomit_ is a scripting language whose main goal is to be cryptic and compact.
 
 This is a cross-platform interpreter for Exomit written in C++.
 
-# License
+# License <a href="https://github.com/UnexomWid/exomit/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3" /></a>
 The Exomit language was created by [UnexomWid](http://unexomwid.me).
 
 The Exomit, Exomit Interpreter, and all pieces of software that interact with Exomit, are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.

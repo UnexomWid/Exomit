@@ -251,36 +251,36 @@ bool parse_expression(POINTER_INFO)
 		expression = left <= right;
 	else throw std::runtime_error("Invalid relational operator");
 
-	std::string logical_operator;
+	std::string conditional_operator;
 	int before = script.tellg();
 
-	for (char c : LOGICAL_AND) // AND.
+	for (char c : CONDITIONAL_AND) // AND.
 		if (script.peek() == c)
-			logical_operator.push_back(script.get());
-	if (logical_operator.compare(LOGICAL_AND) != 0)
+			conditional_operator.push_back(script.get());
+	if (conditional_operator.compare(CONDITIONAL_AND) != 0)
 	{
 		script.seekg(before);
-		logical_operator = "";
-		for (char c : LOGICAL_OR) // OR.
+		conditional_operator = "";
+		for (char c : CONDITIONAL_OR) // OR.
 			if (script.peek() == c)
-				logical_operator.push_back(script.get());
-		if (logical_operator.compare(LOGICAL_OR) != 0)
+				conditional_operator.push_back(script.get());
+		if (conditional_operator.compare(CONDITIONAL_OR) != 0)
 		{
 			script.seekg(before);
-			logical_operator = "";
-			for (char c : LOGICAL_XOR) // XOR.
+			conditional_operator = "";
+			for (char c : CONDITIONAL_XOR) // XOR.
 				if (script.peek() == c)
-					logical_operator.push_back(script.get());
-			if (logical_operator.compare(LOGICAL_XOR) != 0)
+					conditional_operator.push_back(script.get());
+			if (conditional_operator.compare(CONDITIONAL_XOR) != 0)
 				script.seekg(before); // Nothing.
 		}
 	}
 
-	if (logical_operator.compare(LOGICAL_AND) == 0)
+	if (conditional_operator.compare(CONDITIONAL_AND) == 0)
 		return expression && parse_expression(POINTER_INFO_PARAMS);
-	if (logical_operator.compare(LOGICAL_OR) == 0)
+	if (conditional_operator.compare(CONDITIONAL_OR) == 0)
 		return parse_expression(POINTER_INFO_PARAMS) || expression; // Force parse, even if 'expression' is true, to move the stream cursor forwards.
-	if (logical_operator.compare(LOGICAL_XOR) == 0)
+	if (conditional_operator.compare(CONDITIONAL_XOR) == 0)
 		return expression != parse_expression(POINTER_INFO_PARAMS);
 	return expression;
 }

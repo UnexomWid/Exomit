@@ -40,10 +40,8 @@
 #define RELATIONAL_LESS_THAN "LT"
 #define RELATIONAL_LESS_THAN_OR_EQUAL "LTE"
 
-#define LOGICAL_AND "AND"
-#define LOGICAL_OR "OR"
-#define LOGICAL_XOR "XOR"
-
-#define blabla 
+#define CONDITIONAL_AND "AND"
+#define CONDITIONAL_OR "OR"
+#define CONDITIONAL_XOR "XOR"
 
 typedef void(*instruction_body)(POINTER_INFO);

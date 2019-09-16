@@ -3,7 +3,7 @@
 </p>
 
 # About <a href="https://en.wikipedia.org/wiki/C%2B%2B11"><img align="right" src="https://img.shields.io/badge/C%2B%2B-11-00599C?logo=C%2B%2B" alt="C++ 11" /></a>
-_Exomit_ is a scripting language whose main goal is to be cryptic and compact.
+_Exomit_ is an esoteric language whose main goal is to be hard to understand.
 
 This is a cross-platform interpreter for Exomit written in C++.
 
@@ -213,10 +213,10 @@ An expression is made up of 2 numbers and a relational operator:
 [number_1]RELATIONAL_OPERATOR[number_2]
 ```
 
-You can also chain expressions with no limit, using the logical operators (see below _Relational Operators_ and _Logical Operators_)
+You can also chain expressions with no limit, using the conditional operators (see below _Relational Operators_ and _Conditional Operators_)
 
 ```
-[number_1]RELATIONAL_OPERATOR[number_2]LOGICAL_OPERATOR[number_3]RELATIONAL_OPERATOR[number_4]
+[number_1]RELATIONAL_OPERATOR[number_2]CONDITIONAL_OPERATOR[number_3]RELATIONAL_OPERATOR[number_4]
 ```
 
 > Note: chained expressions are evaluated recursively. Here are some examples:
@@ -242,13 +242,13 @@ You can also chain expressions with no limit, using the logical operators (see b
 | RELATIONAL_LESS_THAN             | LT         | Checks whether the left number is less than the right number                |
 | RELATIONAL_LESS_THAN_OR_EQUAL    | LTE        | Checks whether the left number is less than or equal to the right number    |
 
-##### List of Logical Operators
+##### List of Conditional Operators
 
-| Logical Operator | Identifier | Description                                   |
-|------------------|------------|-----------------------------------------------|
-| LOGICAL_AND      | AND        | Checks whether both expressions are true      |
-| LOGICAL_OR       | OR         | Checks whether at lest one expression is true |
-| LOGICAL_XOR      | XOR        | Checks whether the expressions are not equal  |
+| Conditional Operator | Identifier | Description                                   |
+|----------------------|------------|-----------------------------------------------|
+| CONDITIONAL_AND      | AND        | Checks whether both expressions are true      |
+| CONDITIONAL_OR       | OR         | Checks whether at lest one expression is true |
+| CONDITIONAL_XOR      | XOR        | Checks whether the expressions are not equal  |
 
 ##### Example expressions
 

@@ -18,17 +18,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef TMP_INSTRUCTIONS_H
+#define TMP_INSTRUCTIONS_H
 
 #include "instruction.h"
-
 #include <unordered_map>
 
 extern std::unordered_map<char, instruction> instruction_list;
 
 extern void initialize_instructions();
 bool find_instruction(char id, instruction &instr);
-unsigned char parse_num(POINTER_INFO);
+uint8_t parse_num(POINTER_INFO);
 bool parse_expression(POINTER_INFO);
 
 void VALUE_INCREMENT(POINTER_INFO);
@@ -72,3 +72,5 @@ extern instruction INSTRUCTION_STDIN_ADD; // Add from STDIN to value from curren
 extern instruction INSTRUCTION_STDIN_XOR; // XOR STDIN with value from current index.
 extern instruction INSTRUCTION_STDIN_AND; // AND STDIN with value from current index.
 extern instruction INSTRUCTION_STDIN_OR; // OR STDIN with value from current index.
+
+#endif

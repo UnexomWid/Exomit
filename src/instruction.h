@@ -18,7 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef TMP_INSTRUCTION_H
+#define TMP_INSTRUCTION_H
 
 #include "definitions.h"
 
@@ -49,3 +50,5 @@ class instruction
 		bool operator==(instruction right);
 		bool operator>(instruction right);
 };
+
+#endif

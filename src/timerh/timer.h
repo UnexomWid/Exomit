@@ -24,10 +24,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef TMP_TIMER_H
+#define TMP_TIMER_H
+
 #include <chrono>
 #include <string>
-
-#pragma once
 
 #define CHRONOMETER std::chrono::high_resolution_clock::time_point
 #define ULL unsigned long long
@@ -61,3 +62,5 @@ std::string getf_exec_time_ms(CHRONOMETER start);
 std::string getf_exec_time_mis(CHRONOMETER start);
 // Gets the formatted execution time with the precision of a nanosecond.
 std::string getf_exec_time_ns(CHRONOMETER start);
+
+#endif

@@ -2,7 +2,7 @@
   <img src="img/logo.png" alt="Exomit">
 </p>
 
-# About <a href="https://en.wikipedia.org/wiki/C%2B%2B11"><img align="right" src="https://img.shields.io/badge/C%2B%2B-11-00599C?logo=C%2B%2B" alt="C++ 11" /></a>
+# About <a href="https://cmake.org/cmake/help/v3.0/release/3.0.0.html"><img align="right" src="https://img.shields.io/badge/CMake-3.0-CCCCCD?logo=CMake" alt="CMake 3.0" /></a><a href="https://en.wikipedia.org/wiki/C%2B%2B17"><img align="right" src="https://img.shields.io/badge/C%2B%2B-17-00599C?logo=C%2B%2B" alt="C++ 17" /></a>
 _Exomit_ is an esoteric language whose main goal is to be hard to understand.
 
 This is a cross-platform interpreter for Exomit written in C++.

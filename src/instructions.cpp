@@ -20,7 +20,6 @@
 
 #include "instructions.h"
 
-#include <algorithm>
 #include <string>
 
 std::unordered_map<char, instruction> instruction_list;
@@ -46,8 +45,7 @@ instruction INSTRUCTION_STDIN_XOR('x', STDIN_XOR);
 instruction INSTRUCTION_STDIN_AND('&', STDIN_AND);
 instruction INSTRUCTION_STDIN_OR('|', STDIN_OR);
 
-void initialize_instructions()
-{
+void initialize_instructions() {
 	instruction_list[INSTRUCTION_VALUE_INCREMENT.getIdentifier()] = INSTRUCTION_VALUE_INCREMENT;
 	instruction_list[INSTRUCTION_VALUE_DECREMENT.getIdentifier()] = INSTRUCTION_VALUE_DECREMENT;
 	instruction_list[INSTRUCTION_VALUE_OPERATION.getIdentifier()] = INSTRUCTION_VALUE_OPERATION;
@@ -70,19 +68,15 @@ void initialize_instructions()
 	instruction_list[INSTRUCTION_STDIN_OR.getIdentifier()] = INSTRUCTION_STDIN_OR;
 }
 
-bool find_instruction(char id, instruction &instr)
-{
-	if (instruction_list.find(id) != instruction_list.end())
-	{
+bool find_instruction(char id, instruction &instr) {
+	if (instruction_list.find(id) != instruction_list.end()) {
 		instr = instruction_list[id];
 		return true;
 	}
-
 	return false;
 }
 
-unsigned char parse_num(POINTER_INFO)
-{
+uint8_t parse_num(POINTER_INFO) {
 	// This function expects a NUMBER_START character at the beginning.
 	// That's why characters should be extracted carefully, with peek() instead of get().
 	// NUMBER_START characters should not be discarded/ignored somewhere else, except at the beginning of this function (see below).
@@ -98,98 +92,82 @@ unsigned char parse_num(POINTER_INFO)
 
 	char op = script.peek(); // Number start or something else. Don't discard/ignore it yet (see above).
 
-	if (op == NUMBER_END)
-	{
+	if (op == NUMBER_END) {
 		script.ignore(1); // Not a number start.
 		return 0;
 	}
-	if (op == NUMBER_MODIFIER_NEGATIVE)
-	{
+	if (op == NUMBER_MODIFIER_NEGATIVE) {
 		script.ignore(1); // Not a number start.
 		neg = true;
 		op = script.peek();
 	}
 
-	if (op == NUMBER_MODIFIER_VALUE_AT)
-	{
+	if (op == NUMBER_MODIFIER_VALUE_AT) {
 		script.ignore(1); // Not a number start.
 		val = true;
 		op = script.peek();
 	}
 
-	if (op == NUMBER_MODIFIER_INDEX)
-	{
+	if (op == NUMBER_MODIFIER_INDEX) {
 		script.ignore(1); // Not a number start.
 		ind = true;
 		op = script.peek();
 	}
 
-	if (op == '+')
-	{
+	if (op == '+') {
 		script.ignore(1); // Not a number start.
 		add = true;
 		op = script.peek();
 	}
-	else if (op == '-')
-	{
+	else if (op == '-') {
 		script.ignore(1); // Not a number start.
 		sub = true;
 		op = script.peek();
 	}
 
-	if (!isdigit(op))
-	{
-		if (op == NUMBER_END)
-		{
+	if (!isdigit(op)) {
+		if (op == NUMBER_END) {
 			script.ignore(1); // Not a number start.
 
 			if (!ind || add || sub)
 				throw std::runtime_error("Expected number");
-			if (val)
-			{
-				return (unsigned char)(neg ? (-1) * pointer.at(index) : pointer.at(index));
+
+			if (val) {
+				return (uint8_t)(neg ? (-1) * pointer.at(index) : pointer.at(index));
 			}
-			else
-			{
-				return (unsigned char)(neg ? (-1) * index : index);
+			else {
+				return (uint8_t)(neg ? (-1) * index : index);
 			}
 		}
-		else if (op == NUMBER_START) // Number start.
-		{
-			if (ind)
-			{
-				if (val)
-				{
+		else if (op == NUMBER_START) { // Number start.
+			if (ind) {
+				if (val) {
 					if (add)
-						return (unsigned char) (neg ? (-1) * pointer.at(index + parse_num(POINTER_INFO_PARAMS)) : pointer.at(index + parse_num(POINTER_INFO_PARAMS)));
+						return (uint8_t) (neg ? (-1) * pointer.at(index + parse_num(POINTER_INFO_PARAMS)) : pointer.at(index + parse_num(POINTER_INFO_PARAMS)));
 					if (sub)
-						return (unsigned char)(neg ? (-1) * pointer.at(index - parse_num(POINTER_INFO_PARAMS)) : pointer.at(index - parse_num(POINTER_INFO_PARAMS)));
-					return (unsigned char)(neg ? (-1) * pointer.at(parse_num(POINTER_INFO_PARAMS)) : pointer.at(parse_num(POINTER_INFO_PARAMS)));
+						return (uint8_t)(neg ? (-1) * pointer.at(index - parse_num(POINTER_INFO_PARAMS)) : pointer.at(index - parse_num(POINTER_INFO_PARAMS)));
+					return (uint8_t)(neg ? (-1) * pointer.at(parse_num(POINTER_INFO_PARAMS)) : pointer.at(parse_num(POINTER_INFO_PARAMS)));
 				}
-				else
-				{
+				else {
 					if (add)
-						return (unsigned char)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + parse_num(POINTER_INFO_PARAMS));
+						return (uint8_t)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + parse_num(POINTER_INFO_PARAMS));
 					if (sub)
-						return (unsigned char)(neg ? (-1) * (index - parse_num(POINTER_INFO_PARAMS)) : index - parse_num(POINTER_INFO_PARAMS));
-					return (unsigned char)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
+						return (uint8_t)(neg ? (-1) * (index - parse_num(POINTER_INFO_PARAMS)) : index - parse_num(POINTER_INFO_PARAMS));
+					return (uint8_t)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
 				}
 			}
-			else
-			{
-				return (unsigned char)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
+			else {
+				return (uint8_t)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
 			}
 		}
 	}
-	else
-	{
+	else {
 		script.ignore(1); // Not a number start.
 
 		std::string res;
 		res.push_back(op);
 
-		while (isdigit(op = script.get()))
-		{
+		while (isdigit(op = script.get())) {
 			res.push_back(op);
 		}
 
@@ -198,221 +176,189 @@ unsigned char parse_num(POINTER_INFO)
 		while (script.peek() == NUMBER_END)
 			script.ignore(1);
 
-		int num = stoi(res);
+		uint32_t num = stoi(res);
 
-		if (ind)
-		{
-			if (val)
-			{
+		if (ind) {
+			if (val) {
 				if (add)
-					return (unsigned char)(neg ? (-1) * pointer.at(index + num) : pointer.at(index + num));
+					return (uint8_t)(neg ? (-1) * pointer.at(index + num) : pointer.at(index + num));
 				if (sub)
-					return (unsigned char)(neg ? (-1) * pointer.at(index - num) : pointer.at(index - num));
-				return (unsigned char)(neg ? (-1) * pointer.at(num) : pointer.at(num));
+					return (uint8_t)(neg ? (-1) * pointer.at(index - num) : pointer.at(index - num));
+				return (uint8_t)(neg ? (-1) * pointer.at(num) : pointer.at(num));
 			}
-			else
-			{
+			else {
 				if (add)
-					return (unsigned char)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + num);
+					return (uint8_t)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + num);
 				if (sub)
-					return (unsigned char)(neg ? (-1) * (index - num) : index - num);
-				return (unsigned char)(neg ? (-1) * num : num);
+					return (uint8_t)(neg ? (-1) * (index - num) : index - num);
+				return (uint8_t)(neg ? (-1) * num : num);
 			}
 		}
-		else
-		{
-			return (unsigned char)(neg ? (-1) * num : num);
+		else {
+			return (uint8_t)(neg ? (-1) * num : num);
 		}
 	}
+
+	return 0;
 }
 
-bool parse_expression(POINTER_INFO)
-{
-	unsigned char left = parse_num(POINTER_INFO_PARAMS);
+bool parse_expression(POINTER_INFO) {
+	uint8_t left = parse_num(POINTER_INFO_PARAMS);
 
 	std::string relational_operator;
 	while (script.peek() != NUMBER_START)
 		relational_operator.push_back(script.get());
 
-	unsigned char right = parse_num(POINTER_INFO_PARAMS);
+	uint8_t right = parse_num(POINTER_INFO_PARAMS);
 
 	bool expression;
-	if (relational_operator.compare(RELATIONAL_EQUAL) == 0) // Equal.
+	if (relational_operator == RELATIONAL_EQUAL) // Equal.
 		expression = left == right;
-	else if (relational_operator.compare(RELATIONAL_NOT_EQUAL) == 0) // Not Equal.
+	else if (relational_operator == RELATIONAL_NOT_EQUAL) // Not Equal.
 		expression = left != right;
-	else if (relational_operator.compare(RELATIONAL_GREATER_THAN) == 0) // Greater Than.
+	else if (relational_operator == RELATIONAL_GREATER_THAN) // Greater Than.
 		expression = left > right;
-	else if (relational_operator.compare(RELATIONAL_GREATER_THAN_OR_EQUAL) == 0) // Greater Than or Equal.
+	else if (relational_operator == RELATIONAL_GREATER_THAN_OR_EQUAL) // Greater Than or Equal.
 		expression = left >= right;
-	else if (relational_operator.compare(RELATIONAL_LESS_THAN) == 0) // Less Than.
+	else if (relational_operator == RELATIONAL_LESS_THAN) // Less Than.
 		expression = left < right;
-	else if (relational_operator.compare(RELATIONAL_LESS_THAN_OR_EQUAL) == 0) // Less Than or Equal.
+	else if (relational_operator == RELATIONAL_LESS_THAN_OR_EQUAL) // Less Than or Equal.
 		expression = left <= right;
 	else throw std::runtime_error("Invalid relational operator");
 
 	std::string conditional_operator;
-	int before = script.tellg();
+	std::streampos before = script.tellg();
 
 	for (char c : CONDITIONAL_AND) // AND.
 		if (script.peek() == c)
 			conditional_operator.push_back(script.get());
-	if (conditional_operator.compare(CONDITIONAL_AND) != 0)
-	{
+	if (conditional_operator != CONDITIONAL_AND) {
 		script.seekg(before);
 		conditional_operator = "";
 		for (char c : CONDITIONAL_OR) // OR.
 			if (script.peek() == c)
 				conditional_operator.push_back(script.get());
-		if (conditional_operator.compare(CONDITIONAL_OR) != 0)
-		{
+		if (conditional_operator != CONDITIONAL_OR) {
 			script.seekg(before);
 			conditional_operator = "";
 			for (char c : CONDITIONAL_XOR) // XOR.
 				if (script.peek() == c)
 					conditional_operator.push_back(script.get());
-			if (conditional_operator.compare(CONDITIONAL_XOR) != 0)
+			if (conditional_operator != CONDITIONAL_XOR)
 				script.seekg(before); // Nothing.
 		}
 	}
 
-	if (conditional_operator.compare(CONDITIONAL_AND) == 0)
+	if (conditional_operator == CONDITIONAL_AND)
 		return expression && parse_expression(POINTER_INFO_PARAMS);
-	if (conditional_operator.compare(CONDITIONAL_OR) == 0)
+	if (conditional_operator == CONDITIONAL_OR)
 		return parse_expression(POINTER_INFO_PARAMS) || expression; // Force parse, even if 'expression' is true, to move the stream cursor forwards.
-	if (conditional_operator.compare(CONDITIONAL_XOR) == 0)
+	if (conditional_operator == CONDITIONAL_XOR)
 		return expression != parse_expression(POINTER_INFO_PARAMS);
 	return expression;
 }
 
-void VALUE_INCREMENT(POINTER_INFO)
-{
+void VALUE_INCREMENT(POINTER_INFO) {
 	pointer.at(index)++;
 }
 
-void VALUE_DECREMENT(POINTER_INFO)
-{
+void VALUE_DECREMENT(POINTER_INFO) {
 	pointer.at(index)--;
 }
 
-void VALUE_OPERATION(POINTER_INFO)
-{
+void VALUE_OPERATION(POINTER_INFO) {
 	char op = 0;
-	if (script.peek() != NUMBER_START) // Apply to current index.
-	{
+	if (script.peek() != NUMBER_START) { // Apply to current index.
 		script.get(op);
 
-		switch (op)
-		{
-			case '$':
-			{
+		switch (op) {
+			case '$': {
 				pointer.at(index) = parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '+':
-			{
+			case '+': {
 				pointer.at(index) += parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '-':
-			{
+			case '-': {
 				pointer.at(index) -= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '*':
-			{
+			case '*': {
 				pointer.at(index) *= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '/':
-			{
+			case '/': {
 				pointer.at(index) /= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '%':
-			{
+			case '%': {
 				pointer.at(index) %= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case 'x':
-			{
+			case 'x': {
 				pointer.at(index) ^= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '&':
-			{
+			case '&': {
 				pointer.at(index) &= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '|':
-			{
+			case '|': {
 				pointer.at(index) |= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			default:
-			{
+			default: {
 				throw std::runtime_error("Invalid operator");
 				break;
 			}
 		}
 	}
-	else
-	{
-		int new_index = parse_num(POINTER_INFO_PARAMS); // New index.
+	else {
+		uint32_t new_index = parse_num(POINTER_INFO_PARAMS); // New index.
 		while (pointer.size() <= new_index) // Prevents 'invalid vector<t> subscript'.
 			pointer.push_back(0); // Pad with 0s until the new index is reached.
 
 		script.get(op);
 
-		switch (op)
-		{
-			case '$':
-			{
+		switch (op) {
+			case '$': {
 				pointer.at(new_index) = parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '+':
-			{
+			case '+': {
 				pointer.at(new_index) += parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '-':
-			{
+			case '-': {
 				pointer.at(new_index) -= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '*':
-			{
+			case '*': {
 				pointer.at(new_index) *= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '/':
-			{
+			case '/': {
 				pointer.at(new_index) /= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '%':
-			{
+			case '%': {
 				pointer.at(index) %= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case 'x':
-			{
+			case 'x': {
 				pointer.at(new_index) ^= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '&':
-			{
+			case '&': {
 				pointer.at(new_index) &= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			case '|':
-			{
+			case '|': {
 				pointer.at(new_index) |= parse_num(POINTER_INFO_PARAMS);
 				break;
 			}
-			default:
-			{
+			default: {
 				throw std::runtime_error("Invalid operator");
 				break;
 			}
@@ -422,25 +368,20 @@ void VALUE_OPERATION(POINTER_INFO)
 	script.ignore(1); // Ending round bracket.
 }
 
-void INDEX_INCREMENT(POINTER_INFO)
-{
-	index++;
+void INDEX_INCREMENT(POINTER_INFO) {
+	++index;
 	if (index > pointer.size() - 1)
 		pointer.push_back(0);
 }
 
-void INDEX_DECREMENT(POINTER_INFO)
-{
-	index--;
+void INDEX_DECREMENT(POINTER_INFO) {
+	--index;
 }
 
-void UNCERTAINTY_START(POINTER_INFO)
-{
-	if (!parse_expression(POINTER_INFO_PARAMS)) // Skip uncertainty.
-	{
+void UNCERTAINTY_START(POINTER_INFO) {
+	if (!parse_expression(POINTER_INFO_PARAMS)) { // Skip uncertainty.
 		int open_count = 1;
-		while (open_count > 0)
-		{
+		while (open_count > 0) {
 			char c = script.get();
 			if (c == '?')
 				open_count++;
@@ -451,74 +392,63 @@ void UNCERTAINTY_START(POINTER_INFO)
 	else ++uncertainty_count;
 }
 
-void UNCERTAINTY_END(POINTER_INFO)
-{
+void UNCERTAINTY_END(POINTER_INFO) {
 	if (uncertainty_count == 0)
 		throw std::runtime_error("Unexpected uncertainty end");
 
 	--uncertainty_count;
 }
 
-void LOOP_START(POINTER_INFO)
-{
+void LOOP_START(POINTER_INFO) {
 	loop_stack.push(script.tellg()); // Add the position to the stack.
 
-	if (!parse_expression(POINTER_INFO_PARAMS)) // Skip loop.
-	{
+	if (!parse_expression(POINTER_INFO_PARAMS)) { // Skip loop.
 		loop_stack.pop(); // Remove the position from the stack.
-		int open_count = 1;
+		uint32_t open_count = 1;
 		while (open_count > 0)
 		{
 			char c = script.get();
 			if (c == '{')
-				open_count++;
+				++open_count;
 			else if (c == '}')
-				open_count--;
+				--open_count;
 		}
 	}
 }
 
 void LOOP_END(POINTER_INFO)
 {
-	int after_loop = script.tellg();
+	uint32_t after_loop = script.tellg();
 
 	script.seekg(loop_stack.top());
 
-	if (!parse_expression(POINTER_INFO_PARAMS)) // Skip loop.
-	{
+	if (!parse_expression(POINTER_INFO_PARAMS)) { // Skip loop.
 		loop_stack.pop(); // Remove the position from the stack.
 		script.seekg(after_loop);
 	}
 }
 
-void STDOUT_WRITE(POINTER_INFO)
-{
+void STDOUT_WRITE(POINTER_INFO) {
 	char format = script.peek();
 
-	if (format != 'n' && format != 'c' && format != '_' && format != '\\')
-	{
+	if (format != 'n' && format != 'c' && format != '_' && format != '\\') {
 		printf("%c", pointer.at(index));
 		return;
 	}
 
-	while ((format == 'n' || format == 'c' || format == '_' || format == '\\') && !script.eof())
-	{
+	while ((format == 'n' || format == 'c' || format == '_' || format == '\\') && !script.eof()) {
 		script.ignore(1);
 
-		if (format == 'n')
-		{
+		if (format == 'n') {
 			printf("%d", pointer.at(index));
 		}
-		else if (format == 'c')
-		{
+		else if (format == 'c') {
 			printf("%c", pointer.at(index));
 		}
-		else if (format == '_')
-		{
+		else if (format == '_') {
 			printf(" ");
 		}
-		else if (format == '\\')
-		{
+		else if (format == '\\') {
 			printf("\n");
 		}
 
@@ -526,37 +456,32 @@ void STDOUT_WRITE(POINTER_INFO)
 	}
 }
 
-void STDIN_READ(POINTER_INFO)
-{
-	int input = 0;
+void STDIN_READ(POINTER_INFO) {
+	uint8_t input = 0;
 	scanf("%d", &input);
 	pointer.at(index) = input;
 }
 
-void STDIN_ADD(POINTER_INFO)
-{
-	int input = 0;
+void STDIN_ADD(POINTER_INFO) {
+    uint8_t input = 0;
 	scanf("%d", &input);
 	pointer.at(index) += input;
 }
 
-void STDIN_XOR(POINTER_INFO)
-{
-	int input = 0;
+void STDIN_XOR(POINTER_INFO) {
+    uint8_t input = 0;
 	scanf("%d", &input);
 	pointer.at(index) ^= input;
 }
 
-void STDIN_AND(POINTER_INFO)
-{
-	int input = 0;
+void STDIN_AND(POINTER_INFO) {
+    uint8_t input = 0;
 	scanf("%d", &input);
 	pointer.at(index) &= input;
 }
 
-void STDIN_OR(POINTER_INFO)
-{
-	int input = 0;
+void STDIN_OR(POINTER_INFO) {
+    uint8_t input = 0;
 	scanf("%d", &input);
 	pointer.at(index) |= input;
 }

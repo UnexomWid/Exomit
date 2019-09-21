@@ -18,13 +18,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef TMP_DEFINITIONS_H
+#define TMP_DEFINITIONS_H
 
 #include <vector>
 #include <fstream>
 #include <stack>
 
-#define POINTER_INFO std::vector<unsigned char> &pointer, int &index, std::ifstream &script, std::stack<std::streampos> &loop_stack, int &uncertainty_count
+#define POINTER_INFO std::vector<uint8_t> &pointer, uint32_t &index, std::ifstream &script, std::stack<std::streampos> &loop_stack, uint32_t &uncertainty_count
 #define POINTER_INFO_PARAMS pointer, index, script, loop_stack, uncertainty_count
 
 #define NUMBER_START '['
@@ -45,3 +46,5 @@
 #define CONDITIONAL_XOR "XOR"
 
 typedef void(*instruction_body)(POINTER_INFO);
+
+#endif

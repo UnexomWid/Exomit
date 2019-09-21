@@ -1,1 +1,5 @@
 _releases/
+.idea/
+src/cmake-build-release-windows/
+src/cmake-build-release-linux/
+src/cmake-build-debug-windows/

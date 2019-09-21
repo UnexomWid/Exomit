@@ -21,20 +21,16 @@
 #include "instructions.h"
 #include "timerh/timer.h"
 
-#include <stdarg.h>
+#include <cstdarg>
 #include <cstdio>
-#include <string>
-#include <string.h>
+#include <cstring>
 
 void error(const char *text);
-std::string format_string(int count, const char *format, ...);
+std::string format_string(uint16_t count, const char *format, ...);
 bool fileExists(const char* file, std::ifstream &script);
-void interpret(std::ifstream &script, int argc, char *argv[]);
+void interpret(std::ifstream &script, uint32_t argc, char *argv[]);
 
-CHRONOMETER chronometer;
-
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	if (argc < 2)
 		error("[ERROR]: Invalid arguments");
 
@@ -57,74 +53,65 @@ int main(int argc, char *argv[])
 	exit(EXIT_SUCCESS);
 }
 
-void interpret(std::ifstream &script, int argc, char *argv[])
-{
-	try
-	{
-		chronometer = time_now();
+void interpret(std::ifstream &script, uint32_t argc, char *argv[]) {
+	try {
+		CHRONOMETER chronometer = time_now();
 
-		int index = 0;
-		std::vector<unsigned char> pointer;
+        uint32_t index = 0;
+		std::vector<uint8_t> pointer;
 		std::stack<std::streampos> loop_stack;
-		int uncertainty_count = 0;
+        uint32_t uncertainty_count = 0;
 		char current_char;
 
-		try
-		{
-
-			if (argc < 1)
-				pointer.push_back(0);
-			else
-			{
+		try {
+			if (argc < 1) {
+                pointer.push_back(0);
+            }
+			else {
 				// As numbers.
-				if (strcmp(argv[0], "-n") == 0 || strcmp(argv[0], "-N") == 0)
-				{
+				if (strcmp(argv[0], "-n") == 0 || strcmp(argv[0], "-N") == 0) {
 					argc--;
 					argv++;
 
 					pointer.push_back(argc);
 
-					for (int u = 0; u < argc; u++)
-						pointer.push_back(atoi(argv[u]));
+					for (uint32_t i = 0; i < argc; ++i)
+						pointer.push_back(atoi(argv[i]));
 				}
 				// As characters.
-				else if (strcmp(argv[0], "-c") == 0 || strcmp(argv[0], "-C") == 0)
-				{
+				else if (strcmp(argv[0], "-c") == 0 || strcmp(argv[0], "-C") == 0) {
 					argc--;
 					argv++;
 
 					pointer.push_back(argc);
 
-					for (int u = 0; u < argc; u++)
-						pointer.push_back(*argv[u]);
+					for (uint32_t i = 0; i < argc; ++i)
+						pointer.push_back(*argv[i]);
 				}
 				// As a string.
-				else if (strcmp(argv[0], "-s") == 0 || strcmp(argv[0], "-S") == 0)
-				{
+				else if (strcmp(argv[0], "-s") == 0 || strcmp(argv[0], "-S") == 0) {
 					argc--;
 					argv++;
 
 					std::string buffer;
-					for (int u = 0; u < argc; u++)
-						buffer.append(argv[u]);
+					for (uint32_t i = 0; i < argc; ++i)
+						buffer.append(argv[i]);
 
 					pointer.push_back(buffer.length());
 
-					for (int u = 0; u < buffer.length(); u++)
-						pointer.push_back(buffer.at(u));
+					for (char c : buffer)
+						pointer.push_back(c);
 				}
-				else throw std::runtime_error(format_string(19 + strlen(argv[0]), "%s '%s'", "Invalid argument", argv[0]));
+				else throw std::runtime_error(format_string(19u + strlen(argv[0]), "%s '%s'", "Invalid argument", argv[0]));
 			}
 		}
-		catch (std::exception &e)
-		{
+		catch (std::exception &e) {
 			std::string err = "\n[ERROR]: ";
 			err.append(e.what());
 			error(err.c_str());
 		}
 
-		while (script.get(current_char))
-		{
+		while (script.get(current_char)) {
 			// New line, space and tab.
 			if (current_char == 10 || current_char == 13 || current_char == 32 || current_char == 9 || current_char == 11)
 				continue;
@@ -136,8 +123,7 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 		}
 		printf("\n%s %s\n", "[INFO] Execution took ", getf_exec_time_ns(chronometer).c_str());
 	}
-	catch (std::exception &e)
-	{
+	catch (std::exception &e) {
 		std::string err = "\n[ERROR] [Instruction ";
 		err.append(std::to_string(script.tellg()));
 		err.append("]: ");
@@ -146,14 +132,12 @@ void interpret(std::ifstream &script, int argc, char *argv[])
 	}
 }
 
-void error(const char *text)
-{
-	std::fprintf(stderr, text);
+void error(const char *text) {
+	std::fprintf(stderr, "%s", text);
 	exit(EXIT_FAILURE);
 }
 
-std::string format_string(int count, const char *format, ...)
-{
+std::string format_string(uint16_t count, const char *format, ...) {
 	va_list argp;
 	va_start(argp, format);
 
@@ -163,15 +147,12 @@ std::string format_string(int count, const char *format, ...)
 	return std::string(buffer);
 }
 
-bool fileExists(const char* file, std::ifstream &script)
-{
-	try
-	{
-		script.open(file);
+bool fileExists(const char* file, std::ifstream &script) {
+	try {
+		script.open(file, std::ios::binary);
 		return !script.fail();
 	}
-	catch(std::exception &e)
-	{
+	catch(std::exception &e){
 		return false;
 	}
 }

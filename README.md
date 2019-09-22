@@ -93,6 +93,8 @@ exomit test.exit -s H ello
 | INPUT_XOR       | x                | Sets the value at the current index to XOR(input, value)                                                                                                                                                                                                                                             |
 | INPUT_AND       | &                | Sets the value at the current index to AND(input, value)                                                                                                                                                                                                                                             |
 | INPUT_OR        | \|                | Sets the value at the current index to OR(input, value)                                                                                                                                                                                                                                              |
+| FILE_OPEN       | Fv^"PATH"        | Redirects the input (v) or output (^) to the file located at PATH                                                                                                                                                                                                                                    |
+| FILE_CLOSE      | fv^              | Stops redirecting the input (v) or output (^) to the file                                                                                                                                                                                                                                            |
 
 ### OP
 
@@ -291,6 +293,33 @@ You can also chain expressions with no limit, using the conditional operators (s
 // Decrements the value at the current index (0).
 ```
 
+### Files
+
+By default, the interpreter receives input from `STDIN` and outputs to `STDOUT`. However, you can redirect the input/output stream to files.
+
+#### Opening Files
+
+The `FILE_OPEN` instruction tells the interpreter to redirect the input/output to a file:
+
+* To redirect the input, use `v` (_i.e. `Fv"PATH/TO/FILE"`_).
+
+* To redirect the output, use `^` (_i.e. `F^"PATH/TO/FILE"`_).
+
+> If the file doesn't exist, it will be created.
+
+#### Closing Files
+
+Similarly, the `FILE_CLOSE` instruction tells the interpreter to stop redirecting the input/output to a file:
+
+* To stop redirecting the input, use `v` (_i.e. `fv`_).
+
+* To stop redirecting the output, use `^` (_i.e. `f^`_).
+
+After the redirecting is stopped, the interpreter uses the default input/output stream again.
+
+> Executing the `FILE_CLOSE` instruction on the input/output stream, when no file is open on that particular stream, will raise an exception.
+>
+> Files are automatically closed after the script is executed, even if the script doesn't include a `FILE_CLOSE` instruction.
 ## Example Scripts
 
 ```

@@ -34,13 +34,16 @@ instruction INSTRUCTION_UNCERTAINTY_END('!', UNCERTAINTY_END);
 instruction INSTRUCTION_LOOP_START('{', LOOP_START);
 instruction INSTRUCTION_LOOP_END('}', LOOP_END);
 
-instruction INSTRUCTION_STDOUT_WRITE('^', OUTPUT_WRITE);
+instruction INSTRUCTION_OUTPUT_WRITE('^', OUTPUT_WRITE);
 
-instruction INSTRUCTION_STDIN_READ('V', INPUT_READ);
-instruction INSTRUCTION_STDIN_ADD('v', INPUT_ADD);
-instruction INSTRUCTION_STDIN_XOR('x', INPUT_XOR);
-instruction INSTRUCTION_STDIN_AND('&', INPUT_AND);
-instruction INSTRUCTION_STDIN_OR('|', INPUT_OR);
+instruction INSTRUCTION_INPUT_READ('V', INPUT_READ);
+instruction INSTRUCTION_INPUT_ADD('v', INPUT_ADD);
+instruction INSTRUCTION_INPUT_XOR('x', INPUT_XOR);
+instruction INSTRUCTION_INPUT_AND('&', INPUT_AND);
+instruction INSTRUCTION_INPUT_OR('|', INPUT_OR);
+
+instruction INSTRUCTION_FILE_OPEN('F', FILE_OPEN);
+instruction INSTRUCTION_FILE_CLOSE('f', FILE_CLOSE);
 
 void initialize_instructions() {
 	instruction_list[INSTRUCTION_VALUE_INCREMENT.getIdentifier()] = INSTRUCTION_VALUE_INCREMENT;
@@ -56,13 +59,16 @@ void initialize_instructions() {
 	instruction_list[INSTRUCTION_LOOP_START.getIdentifier()] = INSTRUCTION_LOOP_START;
 	instruction_list[INSTRUCTION_LOOP_END.getIdentifier()] = INSTRUCTION_LOOP_END;
 
-	instruction_list[INSTRUCTION_STDOUT_WRITE.getIdentifier()] = INSTRUCTION_STDOUT_WRITE;
+	instruction_list[INSTRUCTION_OUTPUT_WRITE.getIdentifier()] = INSTRUCTION_OUTPUT_WRITE;
 
-	instruction_list[INSTRUCTION_STDIN_READ.getIdentifier()] = INSTRUCTION_STDIN_READ;
-	instruction_list[INSTRUCTION_STDIN_ADD.getIdentifier()] = INSTRUCTION_STDIN_ADD;
-	instruction_list[INSTRUCTION_STDIN_XOR.getIdentifier()] = INSTRUCTION_STDIN_XOR;
-	instruction_list[INSTRUCTION_STDIN_AND.getIdentifier()] = INSTRUCTION_STDIN_AND;
-	instruction_list[INSTRUCTION_STDIN_OR.getIdentifier()] = INSTRUCTION_STDIN_OR;
+	instruction_list[INSTRUCTION_INPUT_READ.getIdentifier()] = INSTRUCTION_INPUT_READ;
+	instruction_list[INSTRUCTION_INPUT_ADD.getIdentifier()] = INSTRUCTION_INPUT_ADD;
+	instruction_list[INSTRUCTION_INPUT_XOR.getIdentifier()] = INSTRUCTION_INPUT_XOR;
+	instruction_list[INSTRUCTION_INPUT_AND.getIdentifier()] = INSTRUCTION_INPUT_AND;
+	instruction_list[INSTRUCTION_INPUT_OR.getIdentifier()] = INSTRUCTION_INPUT_OR;
+
+    instruction_list[INSTRUCTION_FILE_OPEN.getIdentifier()] = INSTRUCTION_FILE_OPEN;
+    instruction_list[INSTRUCTION_FILE_CLOSE.getIdentifier()] = INSTRUCTION_FILE_CLOSE;
 }
 
 bool find_instruction(char id, instruction &instr) {
@@ -170,7 +176,7 @@ uint8_t parse_num(POINTER_INFO) {
 
 		if(op != NUMBER_END)
 			throw std::runtime_error("Expected number end");
-		while (script.peek() == NUMBER_END)
+		while (script.peek() == NUMBER_END && !script.eof())
 			script.ignore(1);
 
 		uint32_t num = stoi(res);
@@ -203,7 +209,7 @@ bool parse_expression(POINTER_INFO) {
 	uint8_t left = parse_num(POINTER_INFO_PARAMS);
 
 	std::string relational_operator;
-	while (script.peek() != NUMBER_START)
+	while (script.peek() != NUMBER_START && !script.eof())
 		relational_operator.push_back(script.get());
 
 	uint8_t right = parse_num(POINTER_INFO_PARAMS);
@@ -429,7 +435,7 @@ void OUTPUT_WRITE(POINTER_INFO) {
 	char format = script.peek();
 
 	if (format != 'n' && format != 'c' && format != '_' && format != '\\') {
-		output << pointer.at(index);
+        (file_output != nullptr ? (*file_output) : output) << pointer.at(index);
 		return;
 	}
 
@@ -437,16 +443,16 @@ void OUTPUT_WRITE(POINTER_INFO) {
 		script.ignore(1);
 
 		if (format == 'n') {
-			output << (int) pointer.at(index);
+            (file_output != nullptr ? (*file_output) : output) << (uint16_t) pointer.at(index);
 		}
 		else if (format == 'c') {
-			output << (char) pointer.at(index);
+            (file_output != nullptr ? (*file_output) : output) << (char) pointer.at(index);
 		}
 		else if (format == '_') {
-			output << ' ';
+            (file_output != nullptr ? (*file_output) : output) << ' ';
 		}
-		else if (format == '\\') {
-			output << '\n';
+		else {
+            (file_output != nullptr ? (*file_output) : output) << '\n';
 		}
 
 		format = script.peek();
@@ -455,30 +461,83 @@ void OUTPUT_WRITE(POINTER_INFO) {
 
 void INPUT_READ(POINTER_INFO) {
 	uint16_t num = 0;
-	input >> num;
+    (file_input != nullptr ? (*file_input) : input) >> num;
 	pointer.at(index) = (uint8_t) num;
 }
 
 void INPUT_ADD(POINTER_INFO) {
     uint16_t num = 0;
-    input >> num;
+    (file_input != nullptr ? (*file_input) : input) >> num;
 	pointer.at(index) += (uint8_t) num;
 }
 
 void INPUT_XOR(POINTER_INFO) {
     uint16_t num = 0;
-    input >> num;
+    (file_input != nullptr ? (*file_input) : input) >> num;
 	pointer.at(index) ^= (uint8_t) num;
 }
 
 void INPUT_AND(POINTER_INFO) {
     uint16_t num = 0;
-    input >> num;
+    (file_input != nullptr ? (*file_input) : input) >> num;
 	pointer.at(index) &= (uint8_t) num;
 }
 
 void INPUT_OR(POINTER_INFO) {
     uint16_t num = 0;
-    input >> num;
+    (file_input != nullptr ? (*file_input) : input) >> num;
 	pointer.at(index) |= (uint8_t) num;
+}
+
+void FILE_OPEN(POINTER_INFO) {
+    char mode = script.peek();
+
+    if (mode != 'v' && mode != '^')
+        throw std::runtime_error("Expected filename open mode");
+
+    script.ignore(1);
+    if(script.peek() != '\"')
+        throw std::runtime_error("Expected starting quotes");
+    script.ignore(1);
+
+    std::string filename;
+
+    while(script.peek() != '\"' && !script.eof())
+        filename.push_back(script.get());
+
+    if(script.eof())
+        throw std::runtime_error("Expected ending quotes");
+
+    script.ignore(1);
+
+    if(mode == 'v') {
+        if(file_input != nullptr)
+            file_input -> close();
+        file_input = new std::ifstream(filename);
+    } else {
+        if(file_output != nullptr)
+            file_output -> close();
+        file_output = new std::ofstream(filename);
+    }
+}
+
+void FILE_CLOSE(POINTER_INFO) {
+    char mode = script.peek();
+
+    if (mode != 'v' && mode != '^')
+        throw std::runtime_error("Expected filename close mode");
+
+    script.ignore(1);
+
+    if(mode == 'v') {
+        if(file_input != nullptr) {
+            file_input -> close();
+            file_input = nullptr;
+        } else throw std::runtime_error("No file opened with read mode");
+    } else {
+        if(file_output != nullptr) {
+            file_output -> close();
+            file_output = nullptr;
+        } else throw std::runtime_error("No file opened with write mode");
+    }
 }

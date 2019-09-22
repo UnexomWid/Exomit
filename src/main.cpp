@@ -57,6 +57,8 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 		CHRONOMETER chronometer = time_now();
 
 		// Pointer info.
+		std::ifstream *file_input = nullptr;
+        std::ofstream *file_output = nullptr;
         uint32_t index = 0;
 		std::vector<uint8_t> pointer;
 		std::stack<std::streampos> loop_stack;
@@ -122,10 +124,23 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
 		}
 
+        if(file_input != nullptr) {
+            file_input -> close();
+            file_input = nullptr;
+        }
+        if(file_output != nullptr) {
+            file_output -> close();
+            file_output = nullptr;
+        }
+
         std::string time = getf_exec_time_ns(chronometer);
-		output << format_string(22 + time.size(), "\n%s %s\n", "[INFO] Execution took ", time.c_str());
+		output << format_string(25 + time.size(), "\n%s %s\n", "[INFO] Execution took ", time.c_str());
 	}
 	catch (std::exception &e) {
+	    if(script.tellg() == -1) {
+	        script.clear();
+            script.seekg(0, std::ios::end);
+        }
 		std::string err = "\n[ERROR] [Instruction ";
 		err.append(std::to_string(script.tellg()));
 		err.append("]: ");

@@ -34,13 +34,13 @@ instruction INSTRUCTION_UNCERTAINTY_END('!', UNCERTAINTY_END);
 instruction INSTRUCTION_LOOP_START('{', LOOP_START);
 instruction INSTRUCTION_LOOP_END('}', LOOP_END);
 
-instruction INSTRUCTION_STDOUT_WRITE('^', STDOUT_WRITE);
+instruction INSTRUCTION_STDOUT_WRITE('^', OUTPUT_WRITE);
 
-instruction INSTRUCTION_STDIN_READ('V', STDIN_READ);
-instruction INSTRUCTION_STDIN_ADD('v', STDIN_ADD);
-instruction INSTRUCTION_STDIN_XOR('x', STDIN_XOR);
-instruction INSTRUCTION_STDIN_AND('&', STDIN_AND);
-instruction INSTRUCTION_STDIN_OR('|', STDIN_OR);
+instruction INSTRUCTION_STDIN_READ('V', INPUT_READ);
+instruction INSTRUCTION_STDIN_ADD('v', INPUT_ADD);
+instruction INSTRUCTION_STDIN_XOR('x', INPUT_XOR);
+instruction INSTRUCTION_STDIN_AND('&', INPUT_AND);
+instruction INSTRUCTION_STDIN_OR('|', INPUT_OR);
 
 void initialize_instructions() {
 	instruction_list[INSTRUCTION_VALUE_INCREMENT.getIdentifier()] = INSTRUCTION_VALUE_INCREMENT;
@@ -425,11 +425,11 @@ void LOOP_END(POINTER_INFO)
 	}
 }
 
-void STDOUT_WRITE(POINTER_INFO) {
+void OUTPUT_WRITE(POINTER_INFO) {
 	char format = script.peek();
 
 	if (format != 'n' && format != 'c' && format != '_' && format != '\\') {
-		printf("%c", pointer.at(index));
+		output << pointer.at(index);
 		return;
 	}
 
@@ -437,48 +437,48 @@ void STDOUT_WRITE(POINTER_INFO) {
 		script.ignore(1);
 
 		if (format == 'n') {
-			printf("%d", pointer.at(index));
+			output << (int) pointer.at(index);
 		}
 		else if (format == 'c') {
-			printf("%c", pointer.at(index));
+			output << (char) pointer.at(index);
 		}
 		else if (format == '_') {
-			printf(" ");
+			output << ' ';
 		}
 		else if (format == '\\') {
-			printf("\n");
+			output << '\n';
 		}
 
 		format = script.peek();
 	}
 }
 
-void STDIN_READ(POINTER_INFO) {
-	uint8_t input = 0;
-	scanf("%d", &input);
-	pointer.at(index) = input;
+void INPUT_READ(POINTER_INFO) {
+	uint16_t num = 0;
+	input >> num;
+	pointer.at(index) = (uint8_t) num;
 }
 
-void STDIN_ADD(POINTER_INFO) {
-    uint8_t input = 0;
-	scanf("%d", &input);
-	pointer.at(index) += input;
+void INPUT_ADD(POINTER_INFO) {
+    uint16_t num = 0;
+    input >> num;
+	pointer.at(index) += (uint8_t) num;
 }
 
-void STDIN_XOR(POINTER_INFO) {
-    uint8_t input = 0;
-	scanf("%d", &input);
-	pointer.at(index) ^= input;
+void INPUT_XOR(POINTER_INFO) {
+    uint16_t num = 0;
+    input >> num;
+	pointer.at(index) ^= (uint8_t) num;
 }
 
-void STDIN_AND(POINTER_INFO) {
-    uint8_t input = 0;
-	scanf("%d", &input);
-	pointer.at(index) &= input;
+void INPUT_AND(POINTER_INFO) {
+    uint16_t num = 0;
+    input >> num;
+	pointer.at(index) &= (uint8_t) num;
 }
 
-void STDIN_OR(POINTER_INFO) {
-    uint8_t input = 0;
-	scanf("%d", &input);
-	pointer.at(index) |= input;
+void INPUT_OR(POINTER_INFO) {
+    uint16_t num = 0;
+    input >> num;
+	pointer.at(index) |= (uint8_t) num;
 }

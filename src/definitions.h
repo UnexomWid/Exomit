@@ -19,12 +19,14 @@
 #ifndef TMP_DEFINITIONS_H
 #define TMP_DEFINITIONS_H
 
+#include <stack>
 #include <vector>
 #include <fstream>
-#include <stack>
+#include <istream>
+#include <ostream>
 
-#define POINTER_INFO std::vector<uint8_t> &pointer, uint32_t &index, std::ifstream &script, std::stack<std::streampos> &loop_stack, uint32_t &uncertainty_count
-#define POINTER_INFO_PARAMS pointer, index, script, loop_stack, uncertainty_count
+#define POINTER_INFO std::vector<uint8_t> &pointer, uint32_t &index, std::ifstream &script, std::istream &input, std::ostream &output, std::stack<std::streampos> &loop_stack, uint32_t &uncertainty_count
+#define POINTER_INFO_PARAMS pointer, index, script, input, output, loop_stack, uncertainty_count
 
 #define NUMBER_START '['
 #define NUMBER_END ']'

@@ -19,14 +19,15 @@
 #include "instruction_handler.h"
 #include "timerh/timer.h"
 
-#include <cstdarg>
 #include <cstdio>
+#include <cstdarg>
 #include <cstring>
+#include <iostream>
 
 void error(const char *text);
 std::string format_string(uint16_t count, const char *format, ...);
-bool fileExists(const char* file, std::ifstream &script);
-void interpret(std::ifstream &script, uint32_t argc, char *argv[]);
+bool open_file(const char* file, std::ifstream &script);
+void interpret(std::ifstream &script, std::istream &input, std::ostream &output, uint32_t argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
 	if (argc < 2)
@@ -36,7 +37,7 @@ int main(int argc, char *argv[]) {
 
 	std::ifstream script;
 
-	if (!fileExists(scriptFile, script))
+	if (!open_file(scriptFile, script))
 		error("[ERROR]: Invalid script file");
 
 	// Ignore the name and script file.
@@ -45,13 +46,13 @@ int main(int argc, char *argv[]) {
 
 	// Initialize instruction list.
 	initialize_instructions();
-	interpret(script, argc, argv);
+	interpret(script, std::cin, std::cout, argc, argv);
 	script.close();
 
 	exit(EXIT_SUCCESS);
 }
 
-void interpret(std::ifstream &script, uint32_t argc, char *argv[]) {
+void interpret(std::ifstream &script, std::istream &input, std::ostream &output, uint32_t argc, char *argv[]) {
 	try {
 		CHRONOMETER chronometer = time_now();
 
@@ -120,7 +121,9 @@ void interpret(std::ifstream &script, uint32_t argc, char *argv[]) {
 				i.execute(POINTER_INFO_PARAMS);
 			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
 		}
-		printf("\n%s %s\n", "[INFO] Execution took ", getf_exec_time_ns(chronometer).c_str());
+
+        std::string time = getf_exec_time_ns(chronometer);
+		output << format_string(22 + time.size(), "\n%s %s\n", "[INFO] Execution took ", time.c_str());
 	}
 	catch (std::exception &e) {
 		std::string err = "\n[ERROR] [Instruction ";
@@ -132,7 +135,7 @@ void interpret(std::ifstream &script, uint32_t argc, char *argv[]) {
 }
 
 void error(const char *text) {
-	std::fprintf(stderr, "%s", text);
+	std::cerr << text;
 	exit(EXIT_FAILURE);
 }
 
@@ -146,7 +149,7 @@ std::string format_string(uint16_t count, const char *format, ...) {
 	return std::string(buffer);
 }
 
-bool fileExists(const char* file, std::ifstream &script) {
+bool open_file(const char* file, std::ifstream &script) {
 	try {
 		script.open(file, std::ios::binary);
 		return !script.fail();

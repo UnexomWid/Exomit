@@ -76,23 +76,23 @@ exomit test.exit -s H ello
 
 ## List of instructions
 
-| Instruction     | Identifier       | Description                                                                                                                                                                                                                                                                                                    |
-|-----------------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| VALUE_INCREMENT | +                | Increments the value at the current index                                                                                                                                                                                                                                                                      |
-| VALUE_DECREMENT | -                | Decrements the value at the current index                                                                                                                                                                                                                                                                      |
-| VALUE_OPERATION | ([INDEX]OP[NUM]) | Executes an operation on the value at an index. See below _OP_ and _[NUM]_                                                                                                                                                                                                                                     |
-| INDEX_INCREMENT | >                | Increments the index                                                                                                                                                                                                                                                                                           |
-| INDEX_DECREMENT | <                | Decrements the index                                                                                                                                                                                                                                                                                           |
-|UNCERTAINTY_START| ?EXP             | Marks the start of an uncertainty, which is executed if the expression EXP is true                                                                                                                                                                                                                             |
-| UNCERTAINTY_END | !                | Marks the end of an uncertainty                                                                                                                                                                                                                                                                                |
-| LOOP_START      | {EXP             | Marks the start of a loop, which is executed while the expression EXP is true                                                                                                                                                                                                                                  |
-| LOOP_END        | }                | Marks the end of a loop                                                                                                                                                                                                                                                                                        |
-| STDOUT_WRITE    | ^                | Writes the value at the current index to STDOUT, as a character. Also searches forwards for other characters (without square brackets): [c] prints the current value as a character, [n] prints the current value as a number, [_] prints a space, [\\] prints the `\n` character. See below _Script Examples_ |
-| STDIN_READ      | V                | Sets the value at the current index to the input from STDIN                                                                                                                                                                                                                                                    |
-| STDIN_ADD       | v                | Adds the input from STDIN to the value at the current index                                                                                                                                                                                                                                                    |
-| STDIN_XOR       | x                | Sets the value at the current index to XOR(STDIN_input, value)                                                                                                                                                                                                                                                 |
-| STDIN_AND       | &                | Sets the value at the current index to AND(STDIN_input, value)                                                                                                                                                                                                                                                 |
-| STDIN_OR        | \|                | Sets the value at the current index to OR(STDIN_input, value)                                                                                                                                                                                                                                                  |
+| Instruction     | Identifier       | Description                                                                                                                                                                                                                                                                                          |
+|-----------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| VALUE_INCREMENT | +                | Increments the value at the current index                                                                                                                                                                                                                                                            |
+| VALUE_DECREMENT | -                | Decrements the value at the current index                                                                                                                                                                                                                                                            |
+| VALUE_OPERATION | ([INDEX]OP[NUM]) | Executes an operation on the value at an index. See below _OP_ and _[NUM]_                                                                                                                                                                                                                           |
+| INDEX_INCREMENT | >                | Increments the index                                                                                                                                                                                                                                                                                 |
+| INDEX_DECREMENT | <                | Decrements the index                                                                                                                                                                                                                                                                                 |
+|UNCERTAINTY_START| ?EXP             | Marks the start of an uncertainty, which is executed if the expression EXP is true                                                                                                                                                                                                                   |
+| UNCERTAINTY_END | !                | Marks the end of an uncertainty                                                                                                                                                                                                                                                                      |
+| LOOP_START      | {EXP             | Marks the start of a loop, which is executed while the expression EXP is true                                                                                                                                                                                                                        |
+| LOOP_END        | }                | Marks the end of a loop                                                                                                                                                                                                                                                                              |
+| OUTPUT_WRITE    | ^                | Writes the value at the current index, as a character. Also searches forwards for other characters (without square brackets): [c] prints the current value as a character, [n] prints the current value as a number, [_] prints a space, [\\] prints the `\n` character. See below _Script Examples_ |
+| INPUT_READ      | V                | Sets the value at the current index to the input                                                                                                                                                                                                                                                     |
+| INPUT_ADD       | v                | Adds the input to the value at the current index                                                                                                                                                                                                                                                     |
+| INPUT_XOR       | x                | Sets the value at the current index to XOR(input, value)                                                                                                                                                                                                                                             |
+| INPUT_AND       | &                | Sets the value at the current index to AND(input, value)                                                                                                                                                                                                                                             |
+| INPUT_OR        | \|                | Sets the value at the current index to OR(input, value)                                                                                                                                                                                                                                              |
 
 ### OP
 
@@ -296,19 +296,19 @@ You can also chain expressions with no limit, using the conditional operators (s
 ```
 +++++^n
 // Summary: Outputs "5".
-// Sets the value at index 0 to 5, and outputs it to STDOUT as a number.
+// Sets the value at index 0 to 5, and outputs it as a number.
 ```
 
 ```
 V^
 // Summary: Outputs the input as a character.
-// Reads from STDIN and replaces the value at index 0 with the input (STDIN_input), and outputs it to STDOUT as a character.
+// Reads and replaces the value at index 0 with the input, and outputs it as a character.
 ```
 
 ```
 V^c_n\
 // Summary: Outputs the input as a character and as a number.
-// Reads from STDIN and replaces the value at index 0 with the input (STDIN_input).
+// Reads and replaces the value at index 0 with the input.
 // Outputs the value as a character.
 // Outputs a space.
 // Outputs the value as a number.
@@ -318,7 +318,7 @@ V^c_n\
 ```
 ++++++++++&^
 // Summary: Outputs the result of AND(10, input).
-// Sets the value at index 0 to 10, then sets it to AND(10, STDIN_input) and outputs it to STDOUT.
+// Sets the value at index 0 to 10, then sets it to AND(10, input) and outputs it.
 ```
 
 ```
@@ -332,11 +332,11 @@ V^c_n\
 ```
 V(+[10])^n
 // Summary: Outputs input + 10.
-// Sets the value at index 0 to STDIN_input, adds 10 to it, and then outputs it to STDOUT as a number.
+// Sets the value at index 0 to input, adds 10 to it, and then outputs it as a number.
 ```
 
 ```
 V([0]+[10])^n
 // Summary: Outputs input + 10 (alternative way).
-// Sets the value at index 0 to STDIN_input, adds 10 to it (by reffering to the value at the index 0), and then outputs it to STDOUT as a number.
+// Sets the value at index 0 to input, adds 10 to it (by reffering to the value at the index 0), and then outputs it as a number.
 ```

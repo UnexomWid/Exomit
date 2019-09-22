@@ -2,8 +2,6 @@
  * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
  * Copyright (C) 2018-2019  UnexomWid
 
- * main.cpp - Contains the entry point of the application.
-
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or

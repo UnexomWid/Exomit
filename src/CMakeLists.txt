@@ -9,8 +9,8 @@ set(src
     definitions.h
     instruction.h
     instruction.cpp
-    instructions.h
-    instructions.cpp
+        instruction_handler.h
+        instruction_handler.cpp
     timerh/timer.h
     timerh/timer.cpp)
 

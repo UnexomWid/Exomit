@@ -17,7 +17,6 @@
  */
 
 #include "instructions.h"
-
 #include <string>
 
 std::unordered_map<char, instruction> instruction_list;

@@ -27,7 +27,7 @@ The Exomit, Exomit Interpreter, and all pieces of software that interact with Ex
 # Exomit
 Exomit consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
 
-The pointer contains references to bytes (called _values_) and is implemented with `std::vector`. Each value represents the ASCII code of a character.
+The pointer contains references to bytes (called _values_). Each value represents the ASCII code of a character.
 
 Each instruction has an _identifier_ (represented by a character) and a _body_ (represented by a function).
 

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	if (!fileExists(scriptFile, script))
 		error("[ERROR]: Invalid script file");
 
-	// Executable name and script file not needed.
+	// Ignore the name and script file.
 	argc -= 2;
 	argv += 2;
 
@@ -55,6 +55,7 @@ void interpret(std::ifstream &script, uint32_t argc, char *argv[]) {
 	try {
 		CHRONOMETER chronometer = time_now();
 
+		// Pointer info.
         uint32_t index = 0;
 		std::vector<uint8_t> pointer;
 		std::stack<std::streampos> loop_stack;

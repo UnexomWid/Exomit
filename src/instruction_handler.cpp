@@ -532,11 +532,13 @@ void FILE_CLOSE(POINTER_INFO) {
     if(mode == 'v') {
         if(file_input != nullptr) {
             file_input -> close();
+            delete file_input;
             file_input = nullptr;
         } else throw std::runtime_error("No file opened with read mode");
     } else {
         if(file_output != nullptr) {
             file_output -> close();
+            delete file_output;
             file_output = nullptr;
         } else throw std::runtime_error("No file opened with write mode");
     }

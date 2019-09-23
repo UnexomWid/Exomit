@@ -27,6 +27,7 @@
 void error(const char *text);
 std::string format_string(uint16_t count, const char *format, ...);
 bool open_file(const char* file, std::ifstream &script);
+void close_files(std::ifstream *&file_input, std::ofstream *&file_output);
 void interpret(std::ifstream &script, std::istream &input, std::ostream &output, uint32_t argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
@@ -53,17 +54,18 @@ int main(int argc, char *argv[]) {
 }
 
 void interpret(std::ifstream &script, std::istream &input, std::ostream &output, uint32_t argc, char *argv[]) {
-	try {
-		CHRONOMETER chronometer = time_now();
+    CHRONOMETER chronometer = time_now();
 
+    std::ifstream *file_input = nullptr;
+    std::ofstream *file_output = nullptr;
+
+	try {
 		// Pointer info.
-		std::ifstream *file_input = nullptr;
-        std::ofstream *file_output = nullptr;
+        char current_char;
         uint32_t index = 0;
 		std::vector<uint8_t> pointer;
-		std::stack<std::streampos> loop_stack;
         uint32_t uncertainty_count = 0;
-		char current_char;
+		std::stack<std::streampos> loop_stack;
 
 		try {
 			if (argc < 1) {
@@ -124,17 +126,8 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
 		}
 
-        if(file_input != nullptr) {
-            file_input -> close();
-            file_input = nullptr;
-        }
-        if(file_output != nullptr) {
-            file_output -> close();
-            file_output = nullptr;
-        }
-
         std::string time = getf_exec_time_ns(chronometer);
-		output << format_string(25 + time.size(), "\n%s %s\n", "[INFO] Execution took ", time.c_str());
+		output << format_string(24 + time.size(), "\n%s %s\n", "[INFO] Execution took", time.c_str());
 	}
 	catch (std::exception &e) {
 	    if(script.tellg() == -1) {
@@ -147,6 +140,8 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 		err.append(e.what());
 		error(err.c_str());
 	}
+
+	close_files(file_input, file_output);
 }
 
 void error(const char *text) {
@@ -172,4 +167,17 @@ bool open_file(const char* file, std::ifstream &script) {
 	catch(std::exception &e){
 		return false;
 	}
+}
+
+void close_files(std::ifstream *&file_input, std::ofstream *&file_output) {
+    if(file_input != nullptr) {
+        file_input -> close();
+        delete file_input;
+        file_input = nullptr;
+    }
+    if(file_output != nullptr) {
+        file_output -> close();
+        delete file_output;
+        file_output = nullptr;
+    }
 }

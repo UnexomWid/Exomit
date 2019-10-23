@@ -1,5 +1,5 @@
 /*
- * Exomit Interpreter - A cross-platform interpreter for Exomit written in C++.
+ * X10 Interpreter - A cross-platform interpreter for X10 written in C++.
  * Copyright (C) 2018-2019  UnexomWid
 
  * This program is free software: you can redistribute it and/or modify

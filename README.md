@@ -1,33 +1,31 @@
 <p align="center">
-  <img src="img/logo.png" alt="Exomit">
+  <img src="img/logo.png" alt="X10">
 </p>
 
 # About <a href="https://cmake.org/cmake/help/v3.0/release/3.0.0.html"><img align="right" src="https://img.shields.io/badge/CMake-3.0-CCCCCD?logo=CMake" alt="CMake 3.0" /></a><a href="https://en.wikipedia.org/wiki/C%2B%2B17"><img align="right" src="https://img.shields.io/badge/C%2B%2B-17-00599C?logo=C%2B%2B" alt="C++ 17" /></a>
-_Exomit_ is an esoteric language whose main goal is to be hard to understand.
+_X10_ is an esoteric language that uses a wide variety of instructions.
 
-This is a cross-platform interpreter for Exomit written in C++.
+This is a cross-platform interpreter for X10 written in C++.
 
-# License <a href="https://github.com/UnexomWid/exomit/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3" /></a>
-The Exomit language was created by [UnexomWid](http://unexomwid.me).
-
-The Exomit, Exomit Interpreter, and all pieces of software that interact with Exomit, are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+# License <a href="https://github.com/UnexomWid/X10/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3" /></a>
+The X10 language was created by [UnexomWid](https://uw.exom.dev). It is licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
 # Releases
 
 >Note: versions with the suffix **R** are considered stable releases, while those with the suffix **D** are considered unstable.
 
-[v3.0D](https://github.com/UnexomWid/exomit/releases/tag/v3.0D) - September 23, 2019
+[v3.0D](https://github.com/UnexomWid/X10/releases/tag/v3.0D) - September 23, 2019
 
-[v2.1R](https://github.com/UnexomWid/exomit/releases/tag/v2.1R) - May 3, 2019
+[v2.1R](https://github.com/UnexomWid/X10/releases/tag/v2.1R) - May 3, 2019
 
-[v2.0R](https://github.com/UnexomWid/exomit/releases/tag/v2.0R) - May 1, 2019
+[v2.0R](https://github.com/UnexomWid/X10/releases/tag/v2.0R) - May 1, 2019
 
-[v1.1R](https://github.com/UnexomWid/exomit/releases/tag/v1.1R) - March 26, 2019
+[v1.1R](https://github.com/UnexomWid/X10/releases/tag/v1.1R) - March 26, 2019
 
-[v1.0R](https://github.com/UnexomWid/exomit/releases/tag/v1.0R) - January 19, 2019
+[v1.0R](https://github.com/UnexomWid/X10/releases/tag/v1.0R) - January 19, 2019
 
-# Exomit
-Exomit consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
+# X10
+X10 consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
 
 The pointer contains references to bytes (called _values_). Each value represents the ASCII code of a character.
 
@@ -37,7 +35,7 @@ The body of an instruction can perform actions on the index, the pointer and on 
 
 ## Using the interpreter
 
-The Exomit Interpreter accepts command-line arguments.
+The X10 Interpreter accepts command-line arguments.
 
 The first argument *must* be the script file to execute.
 
@@ -50,30 +48,30 @@ The value at index 0 will always store the amount of passed arguments. The argum
 ### Examples
 
 ```
-exomit test.exit
-// Executes the "test.exit" script.
+x10 test.x10
+// Executes the "test.x10" script.
 ```
 
 ```
-exomit test.exit -n 50 1 125 9 74
+x10 test.x10 -n 50 1 125 9 74
 // Sets the value at index 0 to 5 (because there are 5 arguments)
 // Sets the value at index 1 to 50, the value at index 2 to 1 and so on. . .
-// Executes the "test.exit" script.
+// Executes the "test.x10" script.
 ```
 
 ```
-exomit test.exit -c a b h U z L
+x10 test.x10 -c a b h U z L
 // Sets the value at index 0 to 6 (because there are 6 arguments)
 // Sets the value at index 1 to 97 ('a' = 97), the value at index 2 to 98 ('b' = 98) and so on. . .
-// Executes the "test.exit" script.
+// Executes the "test.x10" script.
 ```
 
 ```
-exomit test.exit -s H ello
+x10 test.x10 -s H ello
 // Sets the value at index 0 to 6 (because there are 6 arguments)
 // Sets the value at index 1 to 72 ('H' = 97), the value at index 2 to 32 (' ' = 32) and so on. . .
 // (Note that spaces are considered characters too)
-// Executes the "test.exit" script.
+// Executes the "test.x10" script.
 ```
 
 ## List of instructions

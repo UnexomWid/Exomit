@@ -22,56 +22,56 @@
 
 #include "instruction.h"
 
-instruction::instruction() {
+Instruction::Instruction() {
     identifier = '\0';
     body = nullptr;
 }
 
-instruction::instruction(char id, instruction_body bdy) {
+Instruction::Instruction(char id, Body bdy) {
 	identifier = id;
 	body = bdy;
 }
 
-char instruction::getIdentifier() {
+char Instruction::getIdentifier() {
 	return identifier;
 }
 
-void instruction::setIdentifier(char id) {
+void Instruction::setIdentifier(char id) {
 	identifier = id;
 }
 
-instruction_body instruction::getBody() {
+Body Instruction::getBody() {
 	return body;
 }
 
-void instruction::setBody(instruction_body bdy) {
+void Instruction::setBody(Body bdy) {
 	body = bdy;
 }
 
-void instruction::execute(POINTER_INFO) {
+void Instruction::execute(POINTER_INFO) {
 	body(POINTER_INFO_PARAMS);
 }
 
-bool instruction::operator<(char right) {
+bool Instruction::operator<(char right) {
 	return identifier < right;
 }
 
-bool instruction::operator==(char right) {
+bool Instruction::operator==(char right) {
 	return identifier == right;
 }
 
-bool instruction::operator>(char right) {
+bool Instruction::operator>(char right) {
 	return identifier > right;
 }
 
-bool instruction::operator<(instruction right) {
+bool Instruction::operator<(Instruction right) {
 	return identifier < right.identifier;
 }
 
-bool instruction::operator==(instruction right) {
+bool Instruction::operator==(Instruction right) {
 	return identifier == right.identifier;
 }
 
-bool instruction::operator>(instruction right) {
+bool Instruction::operator>(Instruction right) {
 	return identifier > right.identifier;
 }

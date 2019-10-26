@@ -25,32 +25,77 @@
 
 #include "definitions.h"
 
-class instruction
+/// Represents an instruction.
+class Instruction
 {
 	private:
-		instruction_body body;
+        /// The body of the instruction.
+		Body body;
 
 	public:
+        /// The identifier of the instruction.
 		char identifier;
 
-		instruction();
-		instruction(char id, instruction_body bdy);
+        /**
+         * Initializes a new instance of the Instruction class.
+         */
+		Instruction();
+		/**
+		 * Initializes a new instance of the Instruction class.
+		 *
+		 * @param id The ID of the instruction.
+		 * @param bdy The body of the instruction.
+		 */
+		Instruction(char id, Body bdy);
 
+		/**
+		 * Gets the indentifier of the instruction.
+		 *
+		 * @return The identifier of the instruction.
+		 */
 		char getIdentifier();
+		/**
+		 * Sets the identifier of the instruction to a value.
+		 *
+		 * @param id The value to set the identifier of the instruction to.
+		 */
 		void setIdentifier(char id);
 
-		instruction_body getBody();	
-		void setBody(instruction_body bdy);
+        /**
+         * Gets the body of the instruction.
+         *
+         * @return The body of the instruction.
+         */
+		Body getBody();
+        /**
+         * Sets the body of the instruction to a value.
+         *
+         * @param id The value to set the body of the instruction to.
+         */
+		void setBody(Body bdy);
 
+		/**
+		 * Executes the instruction.
+		 *
+		 * @param pointer The data pointer.
+		 * @param index The instruction index.
+		 * @param script The input script.
+         * @param input The default stream from which to receive input.
+         * @param output The default stream where to output.
+		 * @param file_input The stream from which to receive input.
+		 * @param file_output The stream where to output.
+		 * @param loop_stack The loop stack.
+		 * @param uncertainty_count The amount of open uncertainties.
+		 */
 		void execute(POINTER_INFO);
 
 		bool operator<(char right);
 		bool operator==(char right);
 		bool operator>(char right);
 
-		bool operator<(instruction right);
-		bool operator==(instruction right);
-		bool operator>(instruction right);
+		bool operator<(Instruction right);
+		bool operator==(Instruction right);
+		bool operator>(Instruction right);
 };
 
 #endif

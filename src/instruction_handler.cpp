@@ -21,35 +21,36 @@
  */
 
 #include "instruction_handler.h"
+
 #include <string>
 
-std::unordered_map<char, instruction> instruction_list;
+std::unordered_map<char, Instruction> instruction_list;
 
-instruction INSTRUCTION_VALUE_INCREMENT('+', VALUE_INCREMENT);
-instruction INSTRUCTION_VALUE_DECREMENT('-', VALUE_DECREMENT);
-instruction INSTRUCTION_VALUE_OPERATION('(', VALUE_OPERATION);
+Instruction INSTRUCTION_VALUE_INCREMENT('+', VALUE_INCREMENT);
+Instruction INSTRUCTION_VALUE_DECREMENT('-', VALUE_DECREMENT);
+Instruction INSTRUCTION_VALUE_OPERATION('(', VALUE_OPERATION);
 
-instruction INSTRUCTION_INDEX_INCREMENT('>', INDEX_INCREMENT);
-instruction INSTRUCTION_INDEX_DECREMENT('<', INDEX_DECREMENT);
+Instruction INSTRUCTION_INDEX_INCREMENT('>', INDEX_INCREMENT);
+Instruction INSTRUCTION_INDEX_DECREMENT('<', INDEX_DECREMENT);
 
-instruction INSTRUCTION_UNCERTAINTY_START('?', UNCERTAINTY_START);
-instruction INSTRUCTION_UNCERTAINTY_END('!', UNCERTAINTY_END);
+Instruction INSTRUCTION_UNCERTAINTY_START('?', UNCERTAINTY_START);
+Instruction INSTRUCTION_UNCERTAINTY_END('!', UNCERTAINTY_END);
 
-instruction INSTRUCTION_LOOP_START('{', LOOP_START);
-instruction INSTRUCTION_LOOP_END('}', LOOP_END);
+Instruction INSTRUCTION_LOOP_START('{', LOOP_START);
+Instruction INSTRUCTION_LOOP_END('}', LOOP_END);
 
-instruction INSTRUCTION_OUTPUT_WRITE('^', OUTPUT_WRITE);
+Instruction INSTRUCTION_OUTPUT_WRITE('^', OUTPUT_WRITE);
 
-instruction INSTRUCTION_INPUT_READ('V', INPUT_READ);
-instruction INSTRUCTION_INPUT_ADD('v', INPUT_ADD);
-instruction INSTRUCTION_INPUT_XOR('x', INPUT_XOR);
-instruction INSTRUCTION_INPUT_AND('&', INPUT_AND);
-instruction INSTRUCTION_INPUT_OR('|', INPUT_OR);
+Instruction INSTRUCTION_INPUT_READ('V', INPUT_READ);
+Instruction INSTRUCTION_INPUT_ADD('v', INPUT_ADD);
+Instruction INSTRUCTION_INPUT_XOR('x', INPUT_XOR);
+Instruction INSTRUCTION_INPUT_AND('&', INPUT_AND);
+Instruction INSTRUCTION_INPUT_OR('|', INPUT_OR);
 
-instruction INSTRUCTION_FILE_OPEN('F', FILE_OPEN);
-instruction INSTRUCTION_FILE_CLOSE('f', FILE_CLOSE);
+Instruction INSTRUCTION_FILE_OPEN('F', FILE_OPEN);
+Instruction INSTRUCTION_FILE_CLOSE('f', FILE_CLOSE);
 
-void initialize_instructions() {
+void initializeInstructions() {
 	instruction_list[INSTRUCTION_VALUE_INCREMENT.getIdentifier()] = INSTRUCTION_VALUE_INCREMENT;
 	instruction_list[INSTRUCTION_VALUE_DECREMENT.getIdentifier()] = INSTRUCTION_VALUE_DECREMENT;
 	instruction_list[INSTRUCTION_VALUE_OPERATION.getIdentifier()] = INSTRUCTION_VALUE_OPERATION;
@@ -75,7 +76,7 @@ void initialize_instructions() {
     instruction_list[INSTRUCTION_FILE_CLOSE.getIdentifier()] = INSTRUCTION_FILE_CLOSE;
 }
 
-bool find_instruction(char id, instruction &instr) {
+bool findInstruction(char id, Instruction &instr) {
 	if (instruction_list.find(id) != instruction_list.end()) {
 		instr = instruction_list[id];
 		return true;
@@ -83,7 +84,7 @@ bool find_instruction(char id, instruction &instr) {
 	return false;
 }
 
-uint8_t parse_num(POINTER_INFO) {
+uint8_t parseNum(POINTER_INFO) {
 	// This function expects a NUMBER_START character at the beginning.
 	// That's why characters should be extracted carefully, with peek() instead of get().
 	// NUMBER_START characters should not be discarded/ignored somewhere else, except at the beginning of this function (see below).
@@ -150,21 +151,21 @@ uint8_t parse_num(POINTER_INFO) {
 			if (ind) {
 				if (val) {
 					if (add)
-						return (uint8_t) (neg ? (-1) * pointer.at(index + parse_num(POINTER_INFO_PARAMS)) : pointer.at(index + parse_num(POINTER_INFO_PARAMS)));
+						return (uint8_t) (neg ? (-1) * pointer.at(index + parseNum(POINTER_INFO_PARAMS)) : pointer.at(index + parseNum(POINTER_INFO_PARAMS)));
 					if (sub)
-						return (uint8_t)(neg ? (-1) * pointer.at(index - parse_num(POINTER_INFO_PARAMS)) : pointer.at(index - parse_num(POINTER_INFO_PARAMS)));
-					return (uint8_t)(neg ? (-1) * pointer.at(parse_num(POINTER_INFO_PARAMS)) : pointer.at(parse_num(POINTER_INFO_PARAMS)));
+						return (uint8_t)(neg ? (-1) * pointer.at(index - parseNum(POINTER_INFO_PARAMS)) : pointer.at(index - parseNum(POINTER_INFO_PARAMS)));
+					return (uint8_t)(neg ? (-1) * pointer.at(parseNum(POINTER_INFO_PARAMS)) : pointer.at(parseNum(POINTER_INFO_PARAMS)));
 				}
 				else {
 					if (add)
-						return (uint8_t)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + parse_num(POINTER_INFO_PARAMS));
+						return (uint8_t)(neg ? (-1) * (index + parseNum(POINTER_INFO_PARAMS)) : index + parseNum(POINTER_INFO_PARAMS));
 					if (sub)
-						return (uint8_t)(neg ? (-1) * (index - parse_num(POINTER_INFO_PARAMS)) : index - parse_num(POINTER_INFO_PARAMS));
-					return (uint8_t)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
+						return (uint8_t)(neg ? (-1) * (index - parseNum(POINTER_INFO_PARAMS)) : index - parseNum(POINTER_INFO_PARAMS));
+					return (uint8_t)(neg ? (-1) * parseNum(POINTER_INFO_PARAMS) : parseNum(POINTER_INFO_PARAMS));
 				}
 			}
 			else {
-				return (uint8_t)(neg ? (-1) * parse_num(POINTER_INFO_PARAMS) : parse_num(POINTER_INFO_PARAMS));
+				return (uint8_t)(neg ? (-1) * parseNum(POINTER_INFO_PARAMS) : parseNum(POINTER_INFO_PARAMS));
 			}
 		}
 	}
@@ -195,7 +196,7 @@ uint8_t parse_num(POINTER_INFO) {
 			}
 			else {
 				if (add)
-					return (uint8_t)(neg ? (-1) * (index + parse_num(POINTER_INFO_PARAMS)) : index + num);
+					return (uint8_t)(neg ? (-1) * (index + parseNum(POINTER_INFO_PARAMS)) : index + num);
 				if (sub)
 					return (uint8_t)(neg ? (-1) * (index - num) : index - num);
 				return (uint8_t)(neg ? (-1) * num : num);
@@ -209,14 +210,14 @@ uint8_t parse_num(POINTER_INFO) {
 	return 0;
 }
 
-bool parse_expression(POINTER_INFO) {
-	uint8_t left = parse_num(POINTER_INFO_PARAMS);
+bool parseExpression(POINTER_INFO) {
+	uint8_t left = parseNum(POINTER_INFO_PARAMS);
 
 	std::string relational_operator;
 	while (script.peek() != NUMBER_START && !script.eof())
 		relational_operator.push_back(script.get());
 
-	uint8_t right = parse_num(POINTER_INFO_PARAMS);
+	uint8_t right = parseNum(POINTER_INFO_PARAMS);
 
 	bool expression;
 	if (relational_operator == RELATIONAL_EQUAL) // Equal.
@@ -257,11 +258,11 @@ bool parse_expression(POINTER_INFO) {
 	}
 
 	if (conditional_operator == CONDITIONAL_AND)
-		return expression && parse_expression(POINTER_INFO_PARAMS);
+		return expression && parseExpression(POINTER_INFO_PARAMS);
 	if (conditional_operator == CONDITIONAL_OR)
-		return parse_expression(POINTER_INFO_PARAMS) || expression; // Force parse, even if 'expression' is true, to move the stream cursor forwards.
+		return parseExpression(POINTER_INFO_PARAMS) || expression; // Force parse, even if 'expression' is true, to move the stream cursor forwards.
 	if (conditional_operator == CONDITIONAL_XOR)
-		return expression != parse_expression(POINTER_INFO_PARAMS);
+		return expression != parseExpression(POINTER_INFO_PARAMS);
 	return expression;
 }
 
@@ -280,39 +281,39 @@ void VALUE_OPERATION(POINTER_INFO) {
 
 		switch (op) {
 			case '$': {
-				pointer.at(index) = parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) = parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '+': {
-				pointer.at(index) += parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) += parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '-': {
-				pointer.at(index) -= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) -= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '*': {
-				pointer.at(index) *= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) *= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '/': {
-				pointer.at(index) /= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) /= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '%': {
-				pointer.at(index) %= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) %= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case 'x': {
-				pointer.at(index) ^= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) ^= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '&': {
-				pointer.at(index) &= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) &= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '|': {
-				pointer.at(index) |= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) |= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			default: {
@@ -322,7 +323,7 @@ void VALUE_OPERATION(POINTER_INFO) {
 		}
 	}
 	else {
-		uint32_t new_index = parse_num(POINTER_INFO_PARAMS); // New index.
+		uint32_t new_index = parseNum(POINTER_INFO_PARAMS); // New index.
 		while (pointer.size() <= new_index) // Prevents 'invalid vector<t> subscript'.
 			pointer.push_back(0); // Pad with 0s until the new index is reached.
 
@@ -330,39 +331,39 @@ void VALUE_OPERATION(POINTER_INFO) {
 
 		switch (op) {
 			case '$': {
-				pointer.at(new_index) = parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) = parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '+': {
-				pointer.at(new_index) += parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) += parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '-': {
-				pointer.at(new_index) -= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) -= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '*': {
-				pointer.at(new_index) *= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) *= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '/': {
-				pointer.at(new_index) /= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) /= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '%': {
-				pointer.at(index) %= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(index) %= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case 'x': {
-				pointer.at(new_index) ^= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) ^= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '&': {
-				pointer.at(new_index) &= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) &= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			case '|': {
-				pointer.at(new_index) |= parse_num(POINTER_INFO_PARAMS);
+				pointer.at(new_index) |= parseNum(POINTER_INFO_PARAMS);
 				break;
 			}
 			default: {
@@ -386,7 +387,7 @@ void INDEX_DECREMENT(POINTER_INFO) {
 }
 
 void UNCERTAINTY_START(POINTER_INFO) {
-	if (!parse_expression(POINTER_INFO_PARAMS)) { // Skip uncertainty.
+	if (!parseExpression(POINTER_INFO_PARAMS)) { // Skip uncertainty.
 		int open_count = 1;
 		while (open_count > 0) {
 			char c = script.get();
@@ -409,7 +410,7 @@ void UNCERTAINTY_END(POINTER_INFO) {
 void LOOP_START(POINTER_INFO) {
 	loop_stack.push(script.tellg()); // Add the position to the stack.
 
-	if (!parse_expression(POINTER_INFO_PARAMS)) { // Skip loop.
+	if (!parseExpression(POINTER_INFO_PARAMS)) { // Skip loop.
 		loop_stack.pop(); // Remove the position from the stack.
 		uint32_t open_count = 1;
 		while (open_count > 0)
@@ -429,7 +430,7 @@ void LOOP_END(POINTER_INFO)
 
 	script.seekg(loop_stack.top());
 
-	if (!parse_expression(POINTER_INFO_PARAMS)) { // Skip loop.
+	if (!parseExpression(POINTER_INFO_PARAMS)) { // Skip loop.
 		loop_stack.pop(); // Remove the position from the stack.
 		script.seekg(after_loop);
 	}

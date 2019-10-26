@@ -28,12 +28,57 @@
 #include <cstring>
 #include <iostream>
 
+/**
+ * Writes an error to STDERR and terminates the program with the status code 1.
+ *
+ * @param[in] text The error to write.
+ */
 void error(const char *text);
-std::string format_string(uint16_t count, const char *format, ...);
-bool open_file(const char* file, std::ifstream &script);
-void close_files(std::ifstream *&file_input, std::ofstream *&file_output);
+/**
+ * Returns a string from a specified format.
+ *
+ * @param count The maximum amount of characters of the string.
+ * @param format The format to create the string from.
+ * @param ... The additional arguments for the string format.
+ *
+ * @return A string from the specified format.
+ */
+std::string formatString(uint16_t count, const char *format, ...);
+/**
+ * Opens a file, opens an input stream from that file, and returns the value of success.
+ *
+ * @param file The file to open.
+ * @param script The variable which will contain the input stream which was opened from the file.
+ *
+ * @return True, if the file was opened successfully. False otherwise.
+ */
+bool openFile(const char* file, std::ifstream &script);
+/**
+ * Closes a file input stream and a file output stream.
+ *
+ * @param file_input The file input stream to close.
+ * @param file_output The file output stream to close.
+ */
+void closeFiles(std::ifstream *&file_input, std::ofstream *&file_output);
+/**
+ * Interprets a script.
+ *
+ * @param script The script to interpret, as a file input stream.
+ * @param input The stream from which to receive input.
+ * @param output The stream where to output.
+ * @param argc The number of command-line arguments.
+ * @param argv The command-line arguments.
+ */
 void interpret(std::ifstream &script, std::istream &input, std::ostream &output, uint32_t argc, char *argv[]);
 
+/**
+ * The main function.
+ *
+ * @param argc The number of command-line arguments.
+ * @param argv The command-line arguments.
+ *
+ * @return The program exit code.
+ */
 int main(int argc, char *argv[]) {
 	if (argc < 2)
 		error("[ERROR]: Invalid arguments");
@@ -42,7 +87,7 @@ int main(int argc, char *argv[]) {
 
 	std::ifstream script;
 
-	if (!open_file(scriptFile, script))
+	if (!openFile(scriptFile, script))
 		error("[ERROR]: Invalid script file");
 
 	// Ignore the name and script file.
@@ -50,7 +95,7 @@ int main(int argc, char *argv[]) {
 	argv += 2;
 
 	// Initialize instruction list.
-	initialize_instructions();
+    initializeInstructions();
 	interpret(script, std::cin, std::cout, argc, argv);
 	script.close();
 
@@ -110,7 +155,7 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 					for (char c : buffer)
 						pointer.push_back(c);
 				}
-				else throw std::runtime_error(format_string(19u + strlen(argv[0]), "%s '%s'", "Invalid argument", argv[0]));
+				else throw std::runtime_error(formatString(19u + strlen(argv[0]), "%s '%s'", "Invalid argument", argv[0]));
 			}
 		}
 		catch (std::exception &e) {
@@ -124,14 +169,14 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 			if (current_char == 10 || current_char == 13 || current_char == 32 || current_char == 9 || current_char == 11)
 				continue;
 
-			instruction i;
-			if (find_instruction(current_char, i))
+			Instruction i;
+			if (findInstruction(current_char, i))
 				i.execute(POINTER_INFO_PARAMS);
-			else throw std::runtime_error(format_string(23, "%s '%c'", "Invalid instruction", current_char));
+			else throw std::runtime_error(formatString(23, "%s '%c'", "Invalid instruction", current_char));
 		}
 
         std::string time = getf_exec_time_ns(chronometer);
-		output << format_string(24 + time.size(), "\n%s %s\n", "[INFO] Execution took", time.c_str());
+		output << formatString(24 + time.size(), "\n%s %s\n", "[INFO] Execution took", time.c_str());
 	}
 	catch (std::exception &e) {
 	    if(script.tellg() == -1) {
@@ -145,7 +190,7 @@ void interpret(std::ifstream &script, std::istream &input, std::ostream &output,
 		error(err.c_str());
 	}
 
-	close_files(file_input, file_output);
+    closeFiles(file_input, file_output);
 }
 
 void error(const char *text) {
@@ -153,7 +198,7 @@ void error(const char *text) {
 	exit(EXIT_FAILURE);
 }
 
-std::string format_string(uint16_t count, const char *format, ...) {
+std::string formatString(uint16_t count, const char *format, ...) {
 	va_list argp;
 	va_start(argp, format);
 
@@ -163,7 +208,7 @@ std::string format_string(uint16_t count, const char *format, ...) {
 	return std::string(buffer);
 }
 
-bool open_file(const char* file, std::ifstream &script) {
+bool openFile(const char* file, std::ifstream &script) {
 	try {
 		script.open(file, std::ios::binary);
 		return !script.fail();
@@ -173,7 +218,7 @@ bool open_file(const char* file, std::ifstream &script) {
 	}
 }
 
-void close_files(std::ifstream *&file_input, std::ofstream *&file_output) {
+void closeFiles(std::ifstream *&file_input, std::ofstream *&file_output) {
     if(file_input != nullptr) {
         file_input -> close();
         delete file_input;

@@ -3,7 +3,7 @@
 </p>
 
 # About <a href="https://cmake.org/cmake/help/v3.0/release/3.0.0.html"><img align="right" src="https://img.shields.io/badge/CMake-3.0-CCCCCD?logo=CMake" alt="CMake 3.0" /></a><a href="https://en.wikipedia.org/wiki/C%2B%2B17"><img align="right" src="https://img.shields.io/badge/C%2B%2B-17-00599C?logo=C%2B%2B" alt="C++ 17" /></a>
-_X10_ is an esoteric language that uses a wide variety of instructions.
+**X10** (_eXTENded_) is an esoteric programming language that uses a wide variety of instructions.
 
 This is a cross-platform interpreter for X10 written in C++.
 

@@ -24,14 +24,30 @@
 #define X10_INSTRUCTIONS_H
 
 #include "instruction.h"
+
 #include <unordered_map>
 
-extern std::unordered_map<char, instruction> instruction_list;
+/**
+ * The list of instructions.
+ */
+extern std::unordered_map<char, Instruction> instruction_list;
 
-extern void initialize_instructions();
-bool find_instruction(char id, instruction &instr);
-uint8_t parse_num(POINTER_INFO);
-bool parse_expression(POINTER_INFO);
+/**
+ * Initializes the instruction list.
+ */
+extern void initializeInstructions();
+/**
+ * Finds an instruction by ID.
+ *
+ * @param id The ID of the instruction to find.
+ * @param instr The variable which will contain the instruction, if it is found.
+ *
+ * @return Whether or not the instruction was found.
+ */
+bool findInstruction(char id, Instruction &instr);
+
+uint8_t parseNum(POINTER_INFO);
+bool parseExpression(POINTER_INFO);
 
 void VALUE_INCREMENT(POINTER_INFO);
 void VALUE_DECREMENT(POINTER_INFO);
@@ -57,28 +73,28 @@ void INPUT_OR(POINTER_INFO);
 void FILE_OPEN(POINTER_INFO);
 void FILE_CLOSE(POINTER_INFO);
 
-extern instruction INSTRUCTION_VALUE_INCREMENT; // Increment char value at current index.
-extern instruction INSTRUCTION_VALUE_DECREMENT; // Decrement char value at current index.
-extern instruction INSTRUCTION_VALUE_OPERATION; // Execute an operation on value at current index.
+extern Instruction INSTRUCTION_VALUE_INCREMENT; // Increment char value at current index.
+extern Instruction INSTRUCTION_VALUE_DECREMENT; // Decrement char value at current index.
+extern Instruction INSTRUCTION_VALUE_OPERATION; // Execute an operation on value at current index.
 
-extern instruction INSTRUCTION_INDEX_INCREMENT; // Increment index.
-extern instruction INSTRUCTION_INDEX_DECREMENT; // Decrement index.
+extern Instruction INSTRUCTION_INDEX_INCREMENT; // Increment index.
+extern Instruction INSTRUCTION_INDEX_DECREMENT; // Decrement index.
 
-extern instruction INSTRUCTION_UNCERTAINTY_START; // Start an uncertainty;
-extern instruction INSTRUCTION_UNCERTAINTY_END; // End an uncertainty;
+extern Instruction INSTRUCTION_UNCERTAINTY_START; // Start an uncertainty;
+extern Instruction INSTRUCTION_UNCERTAINTY_END; // End an uncertainty;
 
-extern instruction INSTRUCTION_LOOP_START; // Start a loop;
-extern instruction INSTRUCTION_LOOP_END; // End a loop;
+extern Instruction INSTRUCTION_LOOP_START; // Start a loop;
+extern Instruction INSTRUCTION_LOOP_END; // End a loop;
 
-extern instruction INSTRUCTION_OUTPUT_WRITE; // Write to OUTPUT value from current index.
+extern Instruction INSTRUCTION_OUTPUT_WRITE; // Write to OUTPUT value from current index.
 
-extern instruction INSTRUCTION_INPUT_READ; // Read from input to value from current index.
-extern instruction INSTRUCTION_INPUT_ADD; // Add from input to value from current index.
-extern instruction INSTRUCTION_INPUT_XOR; // XOR input with value from current index.
-extern instruction INSTRUCTION_INPUT_AND; // AND input with value from current index.
-extern instruction INSTRUCTION_INPUT_OR; // OR input with value from current index.
+extern Instruction INSTRUCTION_INPUT_READ; // Read from input to value from current index.
+extern Instruction INSTRUCTION_INPUT_ADD; // Add from input to value from current index.
+extern Instruction INSTRUCTION_INPUT_XOR; // XOR input with value from current index.
+extern Instruction INSTRUCTION_INPUT_AND; // AND input with value from current index.
+extern Instruction INSTRUCTION_INPUT_OR; // OR input with value from current index.
 
-extern instruction INSTRUCTION_FILE_OPEN; // Redirect input or output to file.
-extern instruction INSTRUCTION_FILE_CLOSE; // Stop redirecting input or output to file.
+extern Instruction INSTRUCTION_FILE_OPEN; // Redirect input or output to file.
+extern Instruction INSTRUCTION_FILE_CLOSE; // Stop redirecting input or output to file.
 
 #endif

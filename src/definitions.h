@@ -49,6 +49,6 @@
 #define CONDITIONAL_OR "OR"
 #define CONDITIONAL_XOR "XOR"
 
-typedef void(*instruction_body)(POINTER_INFO);
+typedef void(*Body)(POINTER_INFO);
 
 #endif

@@ -7,8 +7,8 @@
 
 This is a cross-platform interpreter for X10 written in C++.
 
-# License <a href="https://github.com/UnexomWid/X10/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3" /></a>
-The X10 language was created by [UnexomWid](https://uw.exom.dev). It is licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+# License <a href="https://github.com/UnexomWid/X10/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
+The X10 language was created by [UnexomWid](https://uw.exom.dev). It is licensed under the [MIT](https://github.com/UnexomWid/X10/blob/master/LICENSE) license.
 
 # Releases
 
@@ -25,7 +25,7 @@ The X10 language was created by [UnexomWid](https://uw.exom.dev). It is licensed
 [v1.0R](https://github.com/UnexomWid/X10/releases/tag/v1.0R) - January 19, 2019
 
 # X10
-X10 consists of an instruction pointer (called _index_), a moveable data pointer (called _pointer_) and multiple instructions.
+X10 consists of an instruction pointer (called _index_), a movable data pointer (called _pointer_) and multiple instructions.
 
 The pointer contains references to bytes (called _values_). Each value represents the ASCII code of a character.
 

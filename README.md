@@ -14,6 +14,8 @@ The X10 language was created by [UnexomWid](https://uw.exom.dev). It is licensed
 
 >Note: versions with the suffix **R** are considered stable releases, while those with the suffix **D** are considered unstable.
 
+[v3.0R](https://github.com/UnexomWid/X10/releases/tag/v3.0R) - October 26, 2019
+
 [v3.0D](https://github.com/UnexomWid/X10/releases/tag/v3.0D) - September 23, 2019
 
 [v2.1R](https://github.com/UnexomWid/X10/releases/tag/v2.1R) - May 3, 2019

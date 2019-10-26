@@ -20,8 +20,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef TMP_INSTRUCTIONS_H
-#define TMP_INSTRUCTIONS_H
+#ifndef X10_INSTRUCTIONS_H
+#define X10_INSTRUCTIONS_H
 
 #include "instruction.h"
 #include <unordered_map>

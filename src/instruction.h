@@ -20,8 +20,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef TMP_INSTRUCTION_H
-#define TMP_INSTRUCTION_H
+#ifndef X10_INSTRUCTION_H
+#define X10_INSTRUCTION_H
 
 #include "definitions.h"
 

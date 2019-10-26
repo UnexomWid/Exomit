@@ -20,8 +20,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef TMP_DEFINITIONS_H
-#define TMP_DEFINITIONS_H
+#ifndef X10_DEFINITIONS_H
+#define X10_DEFINITIONS_H
 
 #include <stack>
 #include <vector>

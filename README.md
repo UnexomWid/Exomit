@@ -205,9 +205,9 @@ The loop is executed while the expression `EXP` is true. When the expression bec
 
 #### Syntax
 
-_Uncertainties_: ?`EXP`instructions_go_here!
+*Uncertainties*: ?`EXP`instructions_go_here!
 
-_Loops_: {`EXP`instructions_go_here}
+*Loops*: {`EXP`instructions_go_here}
 
 #### Expression
 
